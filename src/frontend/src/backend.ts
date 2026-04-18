@@ -184,6 +184,11 @@ export interface DashboardStats {
     liveProjects: bigint;
     completedProjects: bigint;
 }
+export interface DownloadFileResult {
+    contentType: string;
+    data: Uint8Array;
+    filename: string;
+}
 export interface CreateIncubatorParams {
     name: string;
     pptFileName?: string;
@@ -201,6 +206,12 @@ export interface UpdateDeploymentParams {
     githubUrl: string;
     deployedUrl: string;
     engineType: string;
+}
+export interface UploadFileResult {
+    contentType: string;
+    size: bigint;
+    filename: string;
+    objectId: ObjectId;
 }
 export interface UpdateIncubatorParams {
     name: string;
@@ -225,6 +236,7 @@ export interface UserProfile {
     email: string;
     profilePhotoUrl?: string;
 }
+export type ObjectId = string;
 export interface backendInterface {
     addWebLink(title: string, url: string): Promise<WebLink>;
     createDeployment(params: CreateDeploymentParams): Promise<Deployment>;
@@ -232,10 +244,12 @@ export interface backendInterface {
     createIncubatorProject(params: CreateIncubatorParams): Promise<IncubatorProject>;
     createTask(params: CreateTaskParams): Promise<Task>;
     deleteDeployment(id: bigint): Promise<boolean>;
+    deleteFile(objectId: ObjectId): Promise<boolean>;
     deleteIdea(id: bigint): Promise<boolean>;
     deleteIncubatorProject(id: bigint): Promise<boolean>;
     deleteTask(id: bigint): Promise<boolean>;
     deleteWebLink(id: bigint): Promise<boolean>;
+    downloadFile(objectId: ObjectId): Promise<DownloadFileResult | null>;
     getDashboardStats(): Promise<DashboardStats>;
     getDeployments(): Promise<Array<Deployment>>;
     getIdeas(): Promise<Array<Idea>>;
@@ -272,8 +286,50 @@ export interface backendInterface {
         __kind__: "err";
         err: string;
     }>;
+    uploadIdeaPhoto(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorDoc(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorImage(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorPpt(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorSrc(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadProfilePhoto(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
 }
-import type { CreateIdeaParams as _CreateIdeaParams, CreateIncubatorParams as _CreateIncubatorParams, Idea as _Idea, IncubatorProject as _IncubatorProject, Timestamp as _Timestamp, UpdateIdeaParams as _UpdateIdeaParams, UpdateIncubatorParams as _UpdateIncubatorParams, UserId as _UserId, UserProfile as _UserProfile } from "./declarations/backend.did.d.ts";
+import type { CreateIdeaParams as _CreateIdeaParams, CreateIncubatorParams as _CreateIncubatorParams, DownloadFileResult as _DownloadFileResult, Idea as _Idea, IncubatorProject as _IncubatorProject, Timestamp as _Timestamp, UpdateIdeaParams as _UpdateIdeaParams, UpdateIncubatorParams as _UpdateIncubatorParams, UploadFileResult as _UploadFileResult, UserId as _UserId, UserProfile as _UserProfile } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async addWebLink(arg0: string, arg1: string): Promise<WebLink> {
@@ -360,6 +416,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deleteFile(arg0: ObjectId): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteFile(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteFile(arg0);
+            return result;
+        }
+    }
     async deleteIdea(arg0: bigint): Promise<boolean> {
         if (this.processError) {
             try {
@@ -416,6 +486,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async downloadFile(arg0: ObjectId): Promise<DownloadFileResult | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.downloadFile(arg0);
+                return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.downloadFile(arg0);
+            return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getDashboardStats(): Promise<DashboardStats> {
         if (this.processError) {
             try {
@@ -448,28 +532,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getIdeas();
-                return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getIdeas();
-            return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getIncubatorProjects(): Promise<Array<IncubatorProject>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getIncubatorProjects();
                 return from_candid_vec_n11(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getIncubatorProjects();
+            const result = await this.actor.getIdeas();
             return from_candid_vec_n11(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getIncubatorProjects(): Promise<Array<IncubatorProject>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getIncubatorProjects();
+                return from_candid_vec_n12(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getIncubatorProjects();
+            return from_candid_vec_n12(this._uploadFile, this._downloadFile, result);
         }
     }
     async getTasks(): Promise<Array<Task>> {
@@ -490,14 +574,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile();
-                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n13(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile();
-            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n13(this._uploadFile, this._downloadFile, result);
         }
     }
     async getWebLinks(): Promise<Array<WebLink>> {
@@ -517,15 +601,15 @@ export class Backend implements backendInterface {
     async saveUserProfile(arg0: string, arg1: string, arg2: string | null): Promise<UserProfile> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveUserProfile(arg0, arg1, to_candid_opt_n15(this._uploadFile, this._downloadFile, arg2));
-                return from_candid_UserProfile_n13(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.saveUserProfile(arg0, arg1, to_candid_opt_n16(this._uploadFile, this._downloadFile, arg2));
+                return from_candid_UserProfile_n14(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveUserProfile(arg0, arg1, to_candid_opt_n15(this._uploadFile, this._downloadFile, arg2));
-            return from_candid_UserProfile_n13(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.saveUserProfile(arg0, arg1, to_candid_opt_n16(this._uploadFile, this._downloadFile, arg2));
+            return from_candid_UserProfile_n14(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateDeployment(arg0: bigint, arg1: UpdateDeploymentParams): Promise<{
@@ -538,14 +622,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updateDeployment(arg0, arg1);
-                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+                return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateDeployment(arg0, arg1);
-            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateIdea(arg0: bigint, arg1: UpdateIdeaParams): Promise<{
@@ -557,15 +641,15 @@ export class Backend implements backendInterface {
     }> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateIdea(arg0, to_candid_UpdateIdeaParams_n17(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.updateIdea(arg0, to_candid_UpdateIdeaParams_n18(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateIdea(arg0, to_candid_UpdateIdeaParams_n17(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.updateIdea(arg0, to_candid_UpdateIdeaParams_n18(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateIncubatorProject(arg0: bigint, arg1: UpdateIncubatorParams): Promise<{
@@ -577,15 +661,15 @@ export class Backend implements backendInterface {
     }> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateIncubatorProject(arg0, to_candid_UpdateIncubatorParams_n18(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.updateIncubatorProject(arg0, to_candid_UpdateIncubatorParams_n19(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateIncubatorProject(arg0, to_candid_UpdateIncubatorParams_n18(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.updateIncubatorProject(arg0, to_candid_UpdateIncubatorParams_n19(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateTask(arg0: bigint, arg1: UpdateTaskParams): Promise<{
@@ -598,14 +682,134 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.updateTask(arg0, arg1);
-                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+                return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateTask(arg0, arg1);
-            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            return from_candid_variant_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async uploadIdeaPhoto(arg0: string, arg1: string, arg2: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.uploadIdeaPhoto(arg0, arg1, arg2);
+                return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.uploadIdeaPhoto(arg0, arg1, arg2);
+            return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async uploadIncubatorDoc(arg0: string, arg1: string, arg2: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.uploadIncubatorDoc(arg0, arg1, arg2);
+                return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.uploadIncubatorDoc(arg0, arg1, arg2);
+            return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async uploadIncubatorImage(arg0: string, arg1: string, arg2: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.uploadIncubatorImage(arg0, arg1, arg2);
+                return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.uploadIncubatorImage(arg0, arg1, arg2);
+            return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async uploadIncubatorPpt(arg0: string, arg1: string, arg2: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.uploadIncubatorPpt(arg0, arg1, arg2);
+                return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.uploadIncubatorPpt(arg0, arg1, arg2);
+            return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async uploadIncubatorSrc(arg0: string, arg1: string, arg2: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.uploadIncubatorSrc(arg0, arg1, arg2);
+                return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.uploadIncubatorSrc(arg0, arg1, arg2);
+            return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async uploadProfilePhoto(arg0: string, arg1: string, arg2: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.uploadProfilePhoto(arg0, arg1, arg2);
+                return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.uploadProfilePhoto(arg0, arg1, arg2);
+            return from_candid_variant_n20(this._uploadFile, this._downloadFile, result);
         }
     }
 }
@@ -615,16 +819,19 @@ function from_candid_Idea_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
 function from_candid_IncubatorProject_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _IncubatorProject): IncubatorProject {
     return from_candid_record_n9(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserProfile_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserProfile): UserProfile {
-    return from_candid_record_n14(_uploadFile, _downloadFile, value);
+function from_candid_UserProfile_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserProfile): UserProfile {
+    return from_candid_record_n15(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
-    return value.length === 0 ? null : from_candid_UserProfile_n13(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_DownloadFileResult]): DownloadFileResult | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : from_candid_UserProfile_n14(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     principal: _UserId;
     displayName: string;
     email: string;
@@ -729,7 +936,7 @@ function from_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint
         youtubeUrl: value.youtubeUrl
     };
 }
-function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     ok: null;
 } | {
     err: string;
@@ -748,10 +955,29 @@ function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Ui
         err: value.err
     } : value;
 }
-function from_candid_vec_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Idea>): Array<Idea> {
+function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _UploadFileResult;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: UploadFileResult;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_vec_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Idea>): Array<Idea> {
     return value.map((x)=>from_candid_Idea_n3(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_IncubatorProject>): Array<IncubatorProject> {
+function from_candid_vec_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_IncubatorProject>): Array<IncubatorProject> {
     return value.map((x)=>from_candid_IncubatorProject_n8(_uploadFile, _downloadFile, x));
 }
 function to_candid_CreateIdeaParams_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CreateIdeaParams): _CreateIdeaParams {
@@ -760,13 +986,13 @@ function to_candid_CreateIdeaParams_n1(_uploadFile: (file: ExternalBlob) => Prom
 function to_candid_CreateIncubatorParams_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CreateIncubatorParams): _CreateIncubatorParams {
     return to_candid_record_n7(_uploadFile, _downloadFile, value);
 }
-function to_candid_UpdateIdeaParams_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UpdateIdeaParams): _UpdateIdeaParams {
+function to_candid_UpdateIdeaParams_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UpdateIdeaParams): _UpdateIdeaParams {
     return to_candid_record_n2(_uploadFile, _downloadFile, value);
 }
-function to_candid_UpdateIncubatorParams_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UpdateIncubatorParams): _UpdateIncubatorParams {
+function to_candid_UpdateIncubatorParams_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UpdateIncubatorParams): _UpdateIncubatorParams {
     return to_candid_record_n7(_uploadFile, _downloadFile, value);
 }
-function to_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+function to_candid_opt_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
     return value === null ? candid_none() : candid_some(value);
 }
 function to_candid_record_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {

@@ -13,6 +13,13 @@ type UserProfile =
    profilePhotoUrl: opt text;
  };
 type UserId = principal;
+type UploadFileResult = 
+ record {
+   contentType: text;
+   filename: text;
+   objectId: ObjectId;
+   size: nat;
+ };
 type UpdateTaskParams = 
  record {
    description: text;
@@ -62,6 +69,7 @@ type Task =
    taskDate: text;
    taskTime: text;
  };
+type ObjectId = text;
 type IncubatorProject = 
  record {
    callerId: UserId;
@@ -92,6 +100,12 @@ type Idea =
    problem: text;
    status: text;
    youtubeUrl: text;
+ };
+type DownloadFileResult = 
+ record {
+   contentType: text;
+   data: blob;
+   filename: text;
  };
 type Deployment = 
  record {
@@ -157,10 +171,12 @@ service : {
    (IncubatorProject);
   createTask: (params: CreateTaskParams) -> (Task);
   deleteDeployment: (id: nat) -> (bool);
+  deleteFile: (objectId: ObjectId) -> (bool);
   deleteIdea: (id: nat) -> (bool);
   deleteIncubatorProject: (id: nat) -> (bool);
   deleteTask: (id: nat) -> (bool);
   deleteWebLink: (id: nat) -> (bool);
+  downloadFile: (objectId: ObjectId) -> (opt DownloadFileResult) query;
   getDashboardStats: () -> (DashboardStats) query;
   getDeployments: () -> (vec Deployment) query;
   getIdeas: () -> (vec Idea) query;
@@ -189,5 +205,35 @@ service : {
    (variant {
       err: text;
       ok;
+    });
+  uploadIdeaPhoto: (filename: text, contentType: text, data: blob) ->
+   (variant {
+      err: text;
+      ok: UploadFileResult;
+    });
+  uploadIncubatorDoc: (filename: text, contentType: text, data: blob) ->
+   (variant {
+      err: text;
+      ok: UploadFileResult;
+    });
+  uploadIncubatorImage: (filename: text, contentType: text, data: blob) ->
+   (variant {
+      err: text;
+      ok: UploadFileResult;
+    });
+  uploadIncubatorPpt: (filename: text, contentType: text, data: blob) ->
+   (variant {
+      err: text;
+      ok: UploadFileResult;
+    });
+  uploadIncubatorSrc: (filename: text, contentType: text, data: blob) ->
+   (variant {
+      err: text;
+      ok: UploadFileResult;
+    });
+  uploadProfilePhoto: (filename: text, contentType: text, data: blob) ->
+   (variant {
+      err: text;
+      ok: UploadFileResult;
     });
 }

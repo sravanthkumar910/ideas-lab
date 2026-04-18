@@ -109,6 +109,7 @@ export default {
         "blob": "blob-move 30s infinite alternate",
         "blob-2": "blob-move 35s infinite alternate-reverse",
         "fade-in": "fade-in 0.4s ease-out",
+        "slide-in": "slide-in 0.3s ease-out",
       },
     },
   },

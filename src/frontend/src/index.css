@@ -52,6 +52,13 @@
     --chart-4: 0.62 0.22 320;
     --chart-5: 0.55 0.2 25;
 
+    /* Recharts integration */
+    --recharts-success: 0.72 0.15 85;
+    --recharts-warning: 0.78 0.18 60;
+    --recharts-pending: 0.65 0.18 260;
+    --recharts-active: 0.65 0.25 270;
+    --recharts-completed: 0.62 0.22 320;
+
     --sidebar: 0.12 0.05 260;
     --sidebar-foreground: 0.95 0.01 260;
     --sidebar-primary: 0.65 0.25 270;
@@ -104,6 +111,13 @@
     --chart-3: 0.72 0.15 85;
     --chart-4: 0.62 0.22 320;
     --chart-5: 0.55 0.2 25;
+
+    /* Recharts integration */
+    --recharts-success: 0.72 0.15 85;
+    --recharts-warning: 0.78 0.18 60;
+    --recharts-pending: 0.65 0.18 260;
+    --recharts-active: 0.65 0.25 270;
+    --recharts-completed: 0.62 0.22 320;
 
     --sidebar: 0.12 0.05 260;
     --sidebar-foreground: 0.95 0.01 260;
@@ -253,5 +267,108 @@
     background-color: rgba(99, 102, 241, 0.2);
     border-left: 4px solid oklch(var(--secondary));
     @apply text-secondary;
+  }
+
+  /* Recharts integration utilities */
+  .recharts-wrapper {
+    @apply transition-smooth;
+  }
+
+  .recharts-surface {
+    @apply rounded-2xl;
+  }
+
+  .chart-container {
+    @apply glass rounded-2xl p-6;
+  }
+
+  /* Status badge utilities */
+  .badge-active {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-opacity-10 transition-smooth;
+    background-color: oklch(var(--recharts-active) / 0.15);
+    color: oklch(var(--recharts-active));
+  }
+
+  .badge-completed {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-opacity-10 transition-smooth;
+    background-color: oklch(var(--recharts-completed) / 0.15);
+    color: oklch(var(--recharts-completed));
+  }
+
+  .badge-pending {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-opacity-10 transition-smooth;
+    background-color: oklch(var(--recharts-pending) / 0.15);
+    color: oklch(var(--recharts-pending));
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-opacity-10 transition-smooth;
+    background-color: oklch(var(--recharts-success) / 0.15);
+    color: oklch(var(--recharts-success));
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-opacity-10 transition-smooth;
+    background-color: oklch(var(--recharts-warning) / 0.15);
+    color: oklch(var(--recharts-warning));
+  }
+
+  /* Module card utilities */
+  .module-card {
+    @apply glass rounded-3xl p-6 hover:shadow-elevated transition-smooth hover:-translate-y-1;
+  }
+
+  .module-card-header {
+    @apply flex items-center justify-between mb-4 pb-4 border-b border-border;
+  }
+
+  .module-card-title {
+    @apply text-lg font-bold text-foreground font-display;
+  }
+
+  .module-card-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* Slide-out panel utilities */
+  .slide-panel {
+    @apply fixed right-0 top-0 h-full w-96 glass z-50 transform transition-transform duration-300;
+    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .slide-panel.open {
+    @apply translate-x-0;
+  }
+
+  .slide-panel.closed {
+    @apply translate-x-full;
+  }
+
+  /* Tab navigation utilities */
+  .tab-nav {
+    @apply flex gap-2 border-b border-border pb-4;
+  }
+
+  .tab-item {
+    @apply px-4 py-2 rounded-t-2xl text-sm font-semibold transition-smooth cursor-pointer border-b-2 border-transparent;
+    color: oklch(var(--muted-foreground));
+  }
+
+  .tab-item.active {
+    @apply border-b-2 text-foreground;
+    border-color: oklch(var(--primary));
+  }
+
+  /* File upload utilities */
+  .file-input-wrapper {
+    @apply relative inline-block;
+  }
+
+  .file-input-button {
+    @apply glass rounded-2xl px-4 py-2 text-sm font-semibold transition-smooth hover:glass-hover cursor-pointer;
+  }
+
+  .file-input-hidden {
+    @apply hidden;
   }
 }

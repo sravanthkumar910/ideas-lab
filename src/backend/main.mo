@@ -12,6 +12,7 @@ import TasksApi "mixins/tasks-api";
 import DeploymentsApi "mixins/deployments-api";
 import SettingsApi "mixins/settings-api";
 import DashboardApi "mixins/dashboard-api";
+import FilesApi "mixins/files-api";
 
 actor {
   // Ideas state
@@ -30,10 +31,14 @@ actor {
   let profiles = Map.empty<Common.UserId, SettingsTypes.UserProfile>();
   let webLinks = List.empty<SettingsTypes.WebLink>();
 
+  // File storage state (objectId -> StoredFile)
+  let fileStore = Map.empty<Common.ObjectId, Common.StoredFile>();
+
   include IdeasApi(ideas, 0);
   include IncubatorApi(incubatorProjects, 0);
   include TasksApi(tasks, 0);
   include DeploymentsApi(deployments, 0);
   include SettingsApi(profiles, webLinks, 0);
   include DashboardApi(ideas, incubatorProjects, deployments);
+  include FilesApi(fileStore, 0);
 };

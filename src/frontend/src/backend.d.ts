@@ -102,6 +102,11 @@ export interface DashboardStats {
     liveProjects: bigint;
     completedProjects: bigint;
 }
+export interface DownloadFileResult {
+    contentType: string;
+    data: Uint8Array;
+    filename: string;
+}
 export interface CreateIncubatorParams {
     name: string;
     pptFileName?: string;
@@ -119,6 +124,12 @@ export interface UpdateDeploymentParams {
     githubUrl: string;
     deployedUrl: string;
     engineType: string;
+}
+export interface UploadFileResult {
+    contentType: string;
+    size: bigint;
+    filename: string;
+    objectId: ObjectId;
 }
 export interface UpdateIncubatorParams {
     name: string;
@@ -143,6 +154,7 @@ export interface UserProfile {
     email: string;
     profilePhotoUrl?: string;
 }
+export type ObjectId = string;
 export interface backendInterface {
     addWebLink(title: string, url: string): Promise<WebLink>;
     createDeployment(params: CreateDeploymentParams): Promise<Deployment>;
@@ -150,10 +162,12 @@ export interface backendInterface {
     createIncubatorProject(params: CreateIncubatorParams): Promise<IncubatorProject>;
     createTask(params: CreateTaskParams): Promise<Task>;
     deleteDeployment(id: bigint): Promise<boolean>;
+    deleteFile(objectId: ObjectId): Promise<boolean>;
     deleteIdea(id: bigint): Promise<boolean>;
     deleteIncubatorProject(id: bigint): Promise<boolean>;
     deleteTask(id: bigint): Promise<boolean>;
     deleteWebLink(id: bigint): Promise<boolean>;
+    downloadFile(objectId: ObjectId): Promise<DownloadFileResult | null>;
     getDashboardStats(): Promise<DashboardStats>;
     getDeployments(): Promise<Array<Deployment>>;
     getIdeas(): Promise<Array<Idea>>;
@@ -186,6 +200,48 @@ export interface backendInterface {
     updateTask(id: bigint, params: UpdateTaskParams): Promise<{
         __kind__: "ok";
         ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIdeaPhoto(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorDoc(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorImage(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorPpt(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadIncubatorSrc(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    uploadProfilePhoto(filename: string, contentType: string, data: Uint8Array): Promise<{
+        __kind__: "ok";
+        ok: UploadFileResult;
     } | {
         __kind__: "err";
         err: string;

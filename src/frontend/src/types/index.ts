@@ -28,10 +28,24 @@ export interface IncubatorProject {
   pptFileName?: string;
   docFileName?: string;
   srcFileName?: string;
+  createdAt?: bigint;
 }
 
-export type EngineType = "Frontend" | "Backend" | "Full-Stack" | "Mobile App";
-export type Architecture = "Dynamic" | "Static" | "Serverless";
+export type EngineType =
+  | "ICP"
+  | "AWS"
+  | "GCP"
+  | "Azure"
+  | "Vercel"
+  | "Netlify"
+  | "Other";
+export type Architecture =
+  | "Motoko"
+  | "Rust"
+  | "TypeScript"
+  | "Python"
+  | "Go"
+  | "Other";
 
 export interface Deployment {
   id: bigint;
@@ -40,6 +54,7 @@ export interface Deployment {
   githubUrl: string;
   engineType: string;
   architecture: string;
+  createdAt?: bigint;
 }
 
 export interface Task {

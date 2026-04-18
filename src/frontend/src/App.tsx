@@ -26,7 +26,6 @@ export default function App() {
   const backend = useBackend({ actor, actorReady });
   const [activeTab, setActiveTab] = useState<TabId>("overview");
 
-  // While Internet Identity is initializing, show loading
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
@@ -60,7 +59,12 @@ export default function App() {
             liveCount={backend.dashboardStats.liveProjects}
             completedCount={backend.dashboardStats.completedProjects}
             pendingCount={backend.dashboardStats.pendingIdeas}
+            ideas={backend.ideas}
+            incubatorProjects={backend.incubatorProjects}
+            deployments={backend.deployments}
+            tasks={backend.tasks}
             isLoading={backend.statsLoading}
+            onRefresh={backend.refreshAll}
           />
         );
       case "ideas":
@@ -68,8 +72,11 @@ export default function App() {
           <IdeasPage
             ideas={backend.ideas}
             onAdd={backend.addIdea}
+            onUpdate={backend.updateIdea}
             onRemove={backend.removeIdea}
             isLoading={backend.ideasLoading}
+            uploadIdeaPhoto={backend.uploadIdeaPhoto}
+            downloadFile={backend.downloadFile}
           />
         );
       case "incubator":
@@ -77,8 +84,14 @@ export default function App() {
           <IncubatorPage
             projects={backend.incubatorProjects}
             onAdd={backend.addIncubatorProject}
+            onUpdate={backend.updateIncubatorProject}
             onRemove={backend.removeIncubatorProject}
             isLoading={backend.projectsLoading}
+            uploadIncubatorImage={backend.uploadIncubatorImage}
+            uploadIncubatorPpt={backend.uploadIncubatorPpt}
+            uploadIncubatorDoc={backend.uploadIncubatorDoc}
+            uploadIncubatorSrc={backend.uploadIncubatorSrc}
+            downloadFile={backend.downloadFile}
           />
         );
       case "tasks":
@@ -86,6 +99,7 @@ export default function App() {
           <TasksPage
             tasks={backend.tasks}
             createTask={backend.addTask}
+            updateTask={backend.updateTask}
             deleteTask={backend.removeTask}
             isLoading={backend.tasksLoading}
           />
@@ -95,6 +109,7 @@ export default function App() {
           <DeploymentPage
             deployments={backend.deployments}
             onAdd={backend.addDeployment}
+            onUpdate={backend.updateDeployment}
             onRemove={backend.removeDeployment}
             isLoading={backend.deploymentsLoading}
           />
@@ -108,6 +123,8 @@ export default function App() {
             onAddLink={backend.addWebLink}
             onRemoveLink={backend.removeWebLink}
             isLoading={backend.settingsLoading}
+            uploadProfilePhoto={backend.uploadProfilePhoto}
+            downloadFile={backend.downloadFile}
           />
         );
       default:

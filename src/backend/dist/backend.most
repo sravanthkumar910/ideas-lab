@@ -50,6 +50,17 @@ type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type ObjectId__77605358 = Text;
+type StoredFile__551185736 =
+  {
+    contentType : Text;
+    createdAt : Timestamp__301639476;
+    data : Blob;
+    filename : Text;
+    objectId : ObjectId__77605358;
+    owner : UserId__158757552;
+    size : Nat
+  };
 type Task__431803600 =
   {
     callerId : UserId__158757552;
@@ -72,6 +83,7 @@ type WebLink__887739773 =
   {callerId : UserId__158757552; id : Nat; title : Text; url : Text};
 actor {
   stable var _deploymentCounter : Nat;
+  stable var _fileCounter : Nat;
   stable var _ideaCounter : Nat;
   stable var _incubatorCounter : Nat;
   stable var _taskCounter : Nat;
@@ -81,6 +93,11 @@ actor {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Deployment__227264288]];
       var elementIndex : Nat__490723111
+    };
+  stable fileStore :
+    {
+      var root : Node__46230540<ObjectId__77605358, StoredFile__551185736>;
+      var size : Nat__490723111
     };
   stable ideas :
     {

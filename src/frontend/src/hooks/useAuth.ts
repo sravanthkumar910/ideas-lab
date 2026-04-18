@@ -66,7 +66,7 @@ export function useAuth() {
           profilePhotoUrl: saved.profilePhotoUrl,
         });
       } catch {
-        // profile state is already updated locally
+        // profile state is already updated optimistically
       }
     },
     [actor, profile],

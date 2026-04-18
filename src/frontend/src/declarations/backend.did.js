@@ -98,6 +98,12 @@ export const Task = IDL.Record({
   'taskTime' : IDL.Text,
   'callerId' : UserId,
 });
+export const ObjectId = IDL.Text;
+export const DownloadFileResult = IDL.Record({
+  'contentType' : IDL.Text,
+  'data' : IDL.Vec(IDL.Nat8),
+  'filename' : IDL.Text,
+});
 export const DashboardStats = IDL.Record({
   'pendingIdeas' : IDL.Nat,
   'liveProjects' : IDL.Nat,
@@ -144,6 +150,12 @@ export const UpdateTaskParams = IDL.Record({
   'taskDate' : IDL.Text,
   'taskTime' : IDL.Text,
 });
+export const UploadFileResult = IDL.Record({
+  'contentType' : IDL.Text,
+  'size' : IDL.Nat,
+  'filename' : IDL.Text,
+  'objectId' : ObjectId,
+});
 
 export const idlService = IDL.Service({
   'addWebLink' : IDL.Func([IDL.Text, IDL.Text], [WebLink], []),
@@ -156,10 +168,16 @@ export const idlService = IDL.Service({
     ),
   'createTask' : IDL.Func([CreateTaskParams], [Task], []),
   'deleteDeployment' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'deleteFile' : IDL.Func([ObjectId], [IDL.Bool], []),
   'deleteIdea' : IDL.Func([IDL.Nat], [IDL.Bool], []),
   'deleteIncubatorProject' : IDL.Func([IDL.Nat], [IDL.Bool], []),
   'deleteTask' : IDL.Func([IDL.Nat], [IDL.Bool], []),
   'deleteWebLink' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'downloadFile' : IDL.Func(
+      [ObjectId],
+      [IDL.Opt(DownloadFileResult)],
+      ['query'],
+    ),
   'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
   'getDeployments' : IDL.Func([], [IDL.Vec(Deployment)], ['query']),
   'getIdeas' : IDL.Func([], [IDL.Vec(Idea)], ['query']),
@@ -190,6 +208,36 @@ export const idlService = IDL.Service({
   'updateTask' : IDL.Func(
       [IDL.Nat, UpdateTaskParams],
       [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'uploadIdeaPhoto' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+      [],
+    ),
+  'uploadIncubatorDoc' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+      [],
+    ),
+  'uploadIncubatorImage' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+      [],
+    ),
+  'uploadIncubatorPpt' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+      [],
+    ),
+  'uploadIncubatorSrc' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+      [],
+    ),
+  'uploadProfilePhoto' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
       [],
     ),
 });
@@ -287,6 +335,12 @@ export const idlFactory = ({ IDL }) => {
     'taskTime' : IDL.Text,
     'callerId' : UserId,
   });
+  const ObjectId = IDL.Text;
+  const DownloadFileResult = IDL.Record({
+    'contentType' : IDL.Text,
+    'data' : IDL.Vec(IDL.Nat8),
+    'filename' : IDL.Text,
+  });
   const DashboardStats = IDL.Record({
     'pendingIdeas' : IDL.Nat,
     'liveProjects' : IDL.Nat,
@@ -333,6 +387,12 @@ export const idlFactory = ({ IDL }) => {
     'taskDate' : IDL.Text,
     'taskTime' : IDL.Text,
   });
+  const UploadFileResult = IDL.Record({
+    'contentType' : IDL.Text,
+    'size' : IDL.Nat,
+    'filename' : IDL.Text,
+    'objectId' : ObjectId,
+  });
   
   return IDL.Service({
     'addWebLink' : IDL.Func([IDL.Text, IDL.Text], [WebLink], []),
@@ -345,10 +405,16 @@ export const idlFactory = ({ IDL }) => {
       ),
     'createTask' : IDL.Func([CreateTaskParams], [Task], []),
     'deleteDeployment' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'deleteFile' : IDL.Func([ObjectId], [IDL.Bool], []),
     'deleteIdea' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'deleteIncubatorProject' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'deleteTask' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'deleteWebLink' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'downloadFile' : IDL.Func(
+        [ObjectId],
+        [IDL.Opt(DownloadFileResult)],
+        ['query'],
+      ),
     'getDashboardStats' : IDL.Func([], [DashboardStats], ['query']),
     'getDeployments' : IDL.Func([], [IDL.Vec(Deployment)], ['query']),
     'getIdeas' : IDL.Func([], [IDL.Vec(Idea)], ['query']),
@@ -383,6 +449,36 @@ export const idlFactory = ({ IDL }) => {
     'updateTask' : IDL.Func(
         [IDL.Nat, UpdateTaskParams],
         [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'uploadIdeaPhoto' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+        [],
+      ),
+    'uploadIncubatorDoc' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+        [],
+      ),
+    'uploadIncubatorImage' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+        [],
+      ),
+    'uploadIncubatorPpt' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+        [],
+      ),
+    'uploadIncubatorSrc' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
+        [],
+      ),
+    'uploadProfilePhoto' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Variant({ 'ok' : UploadFileResult, 'err' : IDL.Text })],
         [],
       ),
   });

@@ -60,6 +60,11 @@ export interface Deployment {
   'callerId' : UserId,
   'engineType' : string,
 }
+export interface DownloadFileResult {
+  'contentType' : string,
+  'data' : Uint8Array,
+  'filename' : string,
+}
 export interface Idea {
   'id' : bigint,
   'status' : string,
@@ -89,6 +94,7 @@ export interface IncubatorProject {
   'docFileName' : [] | [string],
   'youtubeUrl' : string,
 }
+export type ObjectId = string;
 export interface Task {
   'id' : bigint,
   'createdAt' : Timestamp,
@@ -133,6 +139,12 @@ export interface UpdateTaskParams {
   'taskDate' : string,
   'taskTime' : string,
 }
+export interface UploadFileResult {
+  'contentType' : string,
+  'size' : bigint,
+  'filename' : string,
+  'objectId' : ObjectId,
+}
 export type UserId = Principal;
 export interface UserProfile {
   'principal' : UserId,
@@ -156,10 +168,12 @@ export interface _SERVICE {
   >,
   'createTask' : ActorMethod<[CreateTaskParams], Task>,
   'deleteDeployment' : ActorMethod<[bigint], boolean>,
+  'deleteFile' : ActorMethod<[ObjectId], boolean>,
   'deleteIdea' : ActorMethod<[bigint], boolean>,
   'deleteIncubatorProject' : ActorMethod<[bigint], boolean>,
   'deleteTask' : ActorMethod<[bigint], boolean>,
   'deleteWebLink' : ActorMethod<[bigint], boolean>,
+  'downloadFile' : ActorMethod<[ObjectId], [] | [DownloadFileResult]>,
   'getDashboardStats' : ActorMethod<[], DashboardStats>,
   'getDeployments' : ActorMethod<[], Array<Deployment>>,
   'getIdeas' : ActorMethod<[], Array<Idea>>,
@@ -186,6 +200,36 @@ export interface _SERVICE {
   'updateTask' : ActorMethod<
     [bigint, UpdateTaskParams],
     { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'uploadIdeaPhoto' : ActorMethod<
+    [string, string, Uint8Array],
+    { 'ok' : UploadFileResult } |
+      { 'err' : string }
+  >,
+  'uploadIncubatorDoc' : ActorMethod<
+    [string, string, Uint8Array],
+    { 'ok' : UploadFileResult } |
+      { 'err' : string }
+  >,
+  'uploadIncubatorImage' : ActorMethod<
+    [string, string, Uint8Array],
+    { 'ok' : UploadFileResult } |
+      { 'err' : string }
+  >,
+  'uploadIncubatorPpt' : ActorMethod<
+    [string, string, Uint8Array],
+    { 'ok' : UploadFileResult } |
+      { 'err' : string }
+  >,
+  'uploadIncubatorSrc' : ActorMethod<
+    [string, string, Uint8Array],
+    { 'ok' : UploadFileResult } |
+      { 'err' : string }
+  >,
+  'uploadProfilePhoto' : ActorMethod<
+    [string, string, Uint8Array],
+    { 'ok' : UploadFileResult } |
       { 'err' : string }
   >,
 }

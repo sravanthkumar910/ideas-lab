@@ -242,4 +242,31 @@ export const mockBackend: backendInterface = {
   updateIdea: async () => ({ __kind__: "ok" as const, ok: null }),
   updateIncubatorProject: async () => ({ __kind__: "ok" as const, ok: null }),
   updateTask: async () => ({ __kind__: "ok" as const, ok: null }),
+
+  deleteFile: async () => true,
+  downloadFile: async () => null,
+  uploadIdeaPhoto: async (filename: string, contentType: string) => ({
+    __kind__: "ok" as const,
+    ok: { objectId: `mock-idea-photo-${filename}`, filename, contentType, size: BigInt(0) },
+  }),
+  uploadIncubatorDoc: async (filename: string, contentType: string) => ({
+    __kind__: "ok" as const,
+    ok: { objectId: `mock-inc-doc-${filename}`, filename, contentType, size: BigInt(0) },
+  }),
+  uploadIncubatorSrc: async (filename: string, contentType: string) => ({
+    __kind__: "ok" as const,
+    ok: { objectId: `mock-inc-src-${filename}`, filename, contentType, size: BigInt(0) },
+  }),
+  uploadIncubatorImage: async (filename: string, contentType: string) => ({
+    __kind__: "ok" as const,
+    ok: { objectId: `mock-inc-img-${filename}`, filename, contentType, size: BigInt(0) },
+  }),
+  uploadIncubatorPpt: async (filename: string, contentType: string) => ({
+    __kind__: "ok" as const,
+    ok: { objectId: `mock-inc-ppt-${filename}`, filename, contentType, size: BigInt(0) },
+  }),
+  uploadProfilePhoto: async (filename: string, contentType: string) => ({
+    __kind__: "ok" as const,
+    ok: { objectId: `mock-profile-photo-${filename}`, filename, contentType, size: BigInt(0) },
+  }),
 };

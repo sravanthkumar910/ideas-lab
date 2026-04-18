@@ -1,22 +1,25 @@
 {
-  "overview": "Enterprise Innovation Portal for managing the full lifecycle of ideas — from raw concepts in the Ideas Lab through the Incubator to live Deployments. Features a glassmorphic dark UI with persistent backend storage, file uploads, and a live dashboard tracking your innovation pipeline.",
+  "overview": "Ideas Lab is a full-featured Enterprise Portal and Innovation System. It lets teams track ideas from conception through incubation to deployment, with persistent storage, real authentication, and a polished glassmorphic UI. All data lives in the backend and survives refreshes and updates.",
   "features": [
-    "Login with Internet Identity for secure access",
-    "Dashboard with live KPI stats and Innovation Lifecycle bar chart",
-    "Ideas Lab: create and manage concept cards with photos, descriptions, and resource links",
-    "Incubator: register projects with multi-file uploads (PPT, docs, source code)",
-    "Daily Mission Log: sequential task tracker with dates and times",
-    "Deployment Hub: track live projects with URLs, GitHub links, and engine metadata",
-    "Settings: manage profile, photo, connected platforms, and credentials"
+    "Internet Identity authentication with protected routes",
+    "Dashboard with live stats (live projects, ideas, incubator) and charts",
+    "Ideas Lab — create, edit, delete ideas with photos, status badges, deadlines, and social links",
+    "Incubator — register projects with image/PPT/doc/source file uploads, edit details",
+    "Daily Mission Log — sequential task tracker with timestamps, edit and delete",
+    "Deployment Hub — log live deployments with URLs, GitHub links, engine and architecture tags",
+    "Settings — edit profile, upload profile photo, manage linked platforms",
+    "All data persists across sessions, refreshes, and canister upgrades",
+    "Glassmorphic UI with animated blob backgrounds, Plus Jakarta Sans typography"
   ],
   "category": "productivity",
   "tags": [
-    "innovation",
-    "project-management",
-    "glassmorphism",
     "enterprise",
+    "innovation",
     "ideas",
-    "portfolio"
+    "project-management",
+    "incubator",
+    "glassmorphic",
+    "internet-identity"
   ],
-  "last_updated": "2026-04-18T08:58:31.946Z"
+  "last_updated": "2026-04-18T18:01:40.801Z"
 }
