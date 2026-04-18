@@ -1,0 +1,22 @@
+{
+  "overview": "Enterprise Innovation Portal for managing the full lifecycle of ideas — from raw concepts in the Ideas Lab through the Incubator to live Deployments. Features a glassmorphic dark UI with persistent backend storage, file uploads, and a live dashboard tracking your innovation pipeline.",
+  "features": [
+    "Login with Internet Identity for secure access",
+    "Dashboard with live KPI stats and Innovation Lifecycle bar chart",
+    "Ideas Lab: create and manage concept cards with photos, descriptions, and resource links",
+    "Incubator: register projects with multi-file uploads (PPT, docs, source code)",
+    "Daily Mission Log: sequential task tracker with dates and times",
+    "Deployment Hub: track live projects with URLs, GitHub links, and engine metadata",
+    "Settings: manage profile, photo, connected platforms, and credentials"
+  ],
+  "category": "productivity",
+  "tags": [
+    "innovation",
+    "project-management",
+    "glassmorphism",
+    "enterprise",
+    "ideas",
+    "portfolio"
+  ],
+  "last_updated": "2026-04-18T08:58:31.946Z"
+}

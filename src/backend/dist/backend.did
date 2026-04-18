@@ -1,0 +1,134 @@
+type WebLink = 
+ record {
+   callerId: UserId;
+   id: nat;
+   title: text;
+   url: text;
+ };
+type UserProfile = 
+ record {
+   displayName: text;
+   email: text;
+   "principal": UserId;
+   profilePhotoUrl: opt text;
+ };
+type UserId = principal;
+type Timestamp = int;
+type Task = 
+ record {
+   callerId: UserId;
+   createdAt: Timestamp;
+   description: text;
+   id: nat;
+   taskDate: text;
+   taskTime: text;
+ };
+type IncubatorProject = 
+ record {
+   callerId: UserId;
+   createdAt: Timestamp;
+   docFileName: opt text;
+   googleUrl: text;
+   id: nat;
+   imageUrl: opt text;
+   instaUrl: text;
+   name: text;
+   pptFileName: opt text;
+   srcFileName: opt text;
+   youtubeUrl: text;
+ };
+type Idea = 
+ record {
+   callerId: UserId;
+   createdAt: Timestamp;
+   deadline: text;
+   description: text;
+   googleUrl: text;
+   id: nat;
+   ideaType: text;
+   instaUrl: text;
+   name: text;
+   photoUrl: opt text;
+   place: text;
+   problem: text;
+   status: text;
+   youtubeUrl: text;
+ };
+type Deployment = 
+ record {
+   architecture: text;
+   callerId: UserId;
+   createdAt: Timestamp;
+   deployedUrl: text;
+   engineType: text;
+   githubUrl: text;
+   id: nat;
+   name: text;
+ };
+type DashboardStats = 
+ record {
+   completedProjects: nat;
+   liveProjects: nat;
+   pendingIdeas: nat;
+ };
+type CreateTaskParams = 
+ record {
+   description: text;
+   taskDate: text;
+   taskTime: text;
+ };
+type CreateIncubatorParams = 
+ record {
+   docFileName: opt text;
+   googleUrl: text;
+   imageUrl: opt text;
+   instaUrl: text;
+   name: text;
+   pptFileName: opt text;
+   srcFileName: opt text;
+   youtubeUrl: text;
+ };
+type CreateIdeaParams = 
+ record {
+   deadline: text;
+   description: text;
+   googleUrl: text;
+   ideaType: text;
+   instaUrl: text;
+   name: text;
+   photoUrl: opt text;
+   place: text;
+   problem: text;
+   status: text;
+   youtubeUrl: text;
+ };
+type CreateDeploymentParams = 
+ record {
+   architecture: text;
+   deployedUrl: text;
+   engineType: text;
+   githubUrl: text;
+   name: text;
+ };
+service : {
+  addWebLink: (title: text, url: text) -> (WebLink);
+  createDeployment: (params: CreateDeploymentParams) -> (Deployment);
+  createIdea: (params: CreateIdeaParams) -> (Idea);
+  createIncubatorProject: (params: CreateIncubatorParams) ->
+   (IncubatorProject);
+  createTask: (params: CreateTaskParams) -> (Task);
+  deleteDeployment: (id: nat) -> (bool);
+  deleteIdea: (id: nat) -> (bool);
+  deleteIncubatorProject: (id: nat) -> (bool);
+  deleteTask: (id: nat) -> (bool);
+  deleteWebLink: (id: nat) -> (bool);
+  getDashboardStats: () -> (DashboardStats) query;
+  getDeployments: () -> (vec Deployment) query;
+  getIdeas: () -> (vec Idea) query;
+  getIncubatorProjects: () -> (vec IncubatorProject) query;
+  getTasks: () -> (vec Task) query;
+  getUserProfile: () -> (opt UserProfile) query;
+  getWebLinks: () -> (vec WebLink) query;
+  saveUserProfile: (displayName: text, email: text, profilePhotoUrl:
+   opt text) -> (UserProfile);
+}

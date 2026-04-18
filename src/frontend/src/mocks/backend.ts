@@ -1,0 +1,240 @@
+import type { backendInterface } from "../backend";
+
+const now = BigInt(Date.now()) * BigInt(1_000_000);
+
+const mockPrincipal = {
+  toText: () => "aaaaa-aa",
+  toUint8Array: () => new Uint8Array(29),
+} as unknown as import("@icp-sdk/core/principal").Principal;
+
+export const mockBackend: backendInterface = {
+  addWebLink: async (title: string, url: string) => ({
+    id: BigInt(1),
+    title,
+    url,
+    callerId: mockPrincipal,
+  }),
+
+  createDeployment: async (params) => ({
+    id: BigInt(1),
+    name: params.name,
+    deployedUrl: params.deployedUrl,
+    githubUrl: params.githubUrl,
+    engineType: params.engineType,
+    architecture: params.architecture,
+    createdAt: now,
+    callerId: mockPrincipal,
+  }),
+
+  createIdea: async (params) => ({
+    id: BigInt(1),
+    name: params.name,
+    status: params.status,
+    ideaType: params.ideaType,
+    description: params.description,
+    problem: params.problem,
+    deadline: params.deadline,
+    place: params.place,
+    youtubeUrl: params.youtubeUrl,
+    instaUrl: params.instaUrl,
+    googleUrl: params.googleUrl,
+    photoUrl: params.photoUrl,
+    createdAt: now,
+    callerId: mockPrincipal,
+  }),
+
+  createIncubatorProject: async (params) => ({
+    id: BigInt(1),
+    name: params.name,
+    imageUrl: params.imageUrl,
+    pptFileName: params.pptFileName,
+    docFileName: params.docFileName,
+    srcFileName: params.srcFileName,
+    youtubeUrl: params.youtubeUrl,
+    instaUrl: params.instaUrl,
+    googleUrl: params.googleUrl,
+    createdAt: now,
+    callerId: mockPrincipal,
+  }),
+
+  createTask: async (params) => ({
+    id: BigInt(1),
+    description: params.description,
+    taskDate: params.taskDate,
+    taskTime: params.taskTime,
+    createdAt: now,
+    callerId: mockPrincipal,
+  }),
+
+  deleteDeployment: async () => true,
+  deleteIdea: async () => true,
+  deleteIncubatorProject: async () => true,
+  deleteTask: async () => true,
+  deleteWebLink: async () => true,
+
+  getDashboardStats: async () => ({
+    liveProjects: BigInt(3),
+    completedProjects: BigInt(5),
+    pendingIdeas: BigInt(7),
+  }),
+
+  getDeployments: async () => [
+    {
+      id: BigInt(1),
+      name: "Neural Nexus Platform",
+      deployedUrl: "https://neuralnexus.app",
+      githubUrl: "https://github.com/lab/neural-nexus",
+      engineType: "Full-Stack",
+      architecture: "Serverless",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(2),
+      name: "Quantum Dashboard",
+      deployedUrl: "https://quantum.dev",
+      githubUrl: "https://github.com/lab/quantum",
+      engineType: "Frontend",
+      architecture: "Static",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(3),
+      name: "DataStream API",
+      deployedUrl: "https://api.datastream.io",
+      githubUrl: "https://github.com/lab/datastream-api",
+      engineType: "Backend",
+      architecture: "Dynamic",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+  ],
+
+  getIdeas: async () => [
+    {
+      id: BigInt(1),
+      name: "Neural Nexus",
+      status: "Researching",
+      ideaType: "Hybrid",
+      description: "An AI-powered collaboration platform for distributed research teams.",
+      problem: "Remote research teams lack real-time synchronization and context sharing tools.",
+      deadline: "2026-06-30",
+      place: "Lab B, R&D HQ",
+      youtubeUrl: "",
+      instaUrl: "",
+      googleUrl: "",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(2),
+      name: "BioSense Monitor",
+      status: "Drafting",
+      ideaType: "Hardware",
+      description: "Wearable biosensor integration for continuous health metric tracking.",
+      problem: "Existing wearables lack clinical-grade accuracy for real-time intervention.",
+      deadline: "2026-09-15",
+      place: "MedTech Lab",
+      youtubeUrl: "",
+      instaUrl: "",
+      googleUrl: "",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(3),
+      name: "QuantumFlow Engine",
+      status: "Reviewing",
+      ideaType: "Software",
+      description: "Distributed computing framework leveraging quantum optimization algorithms.",
+      problem: "Traditional computing bottlenecks limit scalability for complex simulations.",
+      deadline: "2026-12-01",
+      place: "Compute Division",
+      youtubeUrl: "",
+      instaUrl: "",
+      googleUrl: "",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+  ],
+
+  getIncubatorProjects: async () => [
+    {
+      id: BigInt(1),
+      name: "Project Helix",
+      imageUrl: undefined,
+      pptFileName: "helix-presentation.pptx",
+      docFileName: "helix-technical-docs.pdf",
+      srcFileName: "helix-source.zip",
+      youtubeUrl: "",
+      instaUrl: "",
+      googleUrl: "",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(2),
+      name: "Aether Cloud",
+      imageUrl: undefined,
+      pptFileName: "aether-deck.pptx",
+      docFileName: undefined,
+      srcFileName: undefined,
+      youtubeUrl: "",
+      instaUrl: "",
+      googleUrl: "",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+  ],
+
+  getTasks: async () => [
+    {
+      id: BigInt(1),
+      description: "Review Q2 innovation pipeline proposals and prioritize top 5 candidates",
+      taskDate: "2026-04-18",
+      taskTime: "09:00",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(2),
+      description: "Conduct technical deep-dive session with Neural Nexus prototype team",
+      taskDate: "2026-04-18",
+      taskTime: "14:30",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+    {
+      id: BigInt(3),
+      description: "Finalize deployment checklist for QuantumFlow Engine staging release",
+      taskDate: "2026-04-19",
+      taskTime: "11:00",
+      createdAt: now,
+      callerId: mockPrincipal,
+    },
+  ],
+
+  getUserProfile: async () => ({
+    principal: mockPrincipal,
+    displayName: "Dr. Jane Doe",
+    email: "jane.doe@innovation.lab",
+    profilePhotoUrl: undefined,
+  }),
+
+  getWebLinks: async () => [
+    {
+      id: BigInt(1),
+      title: "Personal Portfolio",
+      url: "https://janedoe.dev",
+      callerId: mockPrincipal,
+    },
+  ],
+
+  saveUserProfile: async (displayName, email, profilePhotoUrl) => ({
+    principal: mockPrincipal,
+    displayName,
+    email,
+    profilePhotoUrl: profilePhotoUrl ?? undefined,
+  }),
+};

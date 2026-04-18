@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+    font-display: swap;
+  }
+
+  :root {
+    --font-display: "Plus Jakarta Sans";
+    --font-body: "Plus Jakarta Sans";
+    --font-mono: "Geist Mono";
+    --radius: 0.625rem;
+
+    --background: 0.065 0.04 260;
+    --foreground: 0.95 0.01 260;
+    --card: 0.12 0.05 260;
+    --card-foreground: 0.95 0.01 260;
+    --popover: 0.15 0.05 260;
+    --popover-foreground: 0.95 0.01 260;
+
+    --primary: 0.65 0.25 270;
+    --primary-foreground: 0.95 0.01 270;
+
+    --secondary: 0.75 0.15 270;
+    --secondary-foreground: 0.065 0.04 260;
+    --muted: 0.22 0.05 260;
+    --muted-foreground: 0.65 0.01 260;
+
+    --accent: 0.62 0.22 320;
+    --accent-foreground: 0.95 0.01 320;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.95 0.01 25;
+
+    --border: 0.18 0.04 260;
+    --input: 0.18 0.04 260;
+    --ring: 0.65 0.25 270;
+
+    --chart-1: 0.65 0.25 270;
+    --chart-2: 0.6 0.18 150;
+    --chart-3: 0.72 0.15 85;
+    --chart-4: 0.62 0.22 320;
+    --chart-5: 0.55 0.2 25;
+
+    --sidebar: 0.12 0.05 260;
+    --sidebar-foreground: 0.95 0.01 260;
+    --sidebar-primary: 0.65 0.25 270;
+    --sidebar-primary-foreground: 0.95 0.01 270;
+    --sidebar-accent: 0.22 0.05 260;
+    --sidebar-accent-foreground: 0.85 0.01 260;
+    --sidebar-border: 0.18 0.04 260;
+    --sidebar-ring: 0.65 0.25 270;
+
+    /* Glassmorphism & animation tokens */
+    --gradient-indigo-pink: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.15),
+      rgba(236, 72, 153, 0.1)
+    );
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover-bg: rgba(255, 255, 255, 0.06);
+    --glass-hover-border: rgba(255, 255, 255, 0.15);
+  }
+
+  .dark {
+    --background: 0.065 0.04 260;
+    --foreground: 0.95 0.01 260;
+    --card: 0.12 0.05 260;
+    --card-foreground: 0.95 0.01 260;
+    --popover: 0.15 0.05 260;
+    --popover-foreground: 0.95 0.01 260;
+
+    --primary: 0.65 0.25 270;
+    --primary-foreground: 0.95 0.01 270;
+
+    --secondary: 0.75 0.15 270;
+    --secondary-foreground: 0.065 0.04 260;
+    --muted: 0.22 0.05 260;
+    --muted-foreground: 0.65 0.01 260;
+
+    --accent: 0.62 0.22 320;
+    --accent-foreground: 0.95 0.01 320;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.95 0.01 25;
+
+    --border: 0.18 0.04 260;
+    --input: 0.18 0.04 260;
+    --ring: 0.65 0.25 270;
+
+    --chart-1: 0.65 0.25 270;
+    --chart-2: 0.6 0.18 150;
+    --chart-3: 0.72 0.15 85;
+    --chart-4: 0.62 0.22 320;
+    --chart-5: 0.55 0.2 25;
+
+    --sidebar: 0.12 0.05 260;
+    --sidebar-foreground: 0.95 0.01 260;
+    --sidebar-primary: 0.65 0.25 270;
+    --sidebar-primary-foreground: 0.95 0.01 270;
+    --sidebar-accent: 0.22 0.05 260;
+    --sidebar-accent-foreground: 0.85 0.01 260;
+    --sidebar-border: 0.18 0.04 260;
+    --sidebar-ring: 0.65 0.25 270;
+
+    --gradient-indigo-pink: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.15),
+      rgba(236, 72, 153, 0.1)
+    );
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover-bg: rgba(255, 255, 255, 0.06);
+    --glass-hover-border: rgba(255, 255, 255, 0.15);
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Glassmorphism utilities */
+  .glass {
+    @apply backdrop-blur-xl;
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-hover {
+    @apply transition-smooth;
+  }
+
+  .glass-hover:hover {
+    background-color: var(--glass-hover-bg);
+    border-color: var(--glass-hover-border);
+  }
+
+  /* Gradient blob animations */
+  @keyframes blob-move {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(30px, -50px) rotate(120deg);
+    }
+    66% {
+      transform: translate(-20px, 20px) rotate(240deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg);
+    }
+  }
+
+  .animate-blob {
+    animation: blob-move 30s infinite alternate;
+  }
+
+  .animate-blob-2 {
+    animation: blob-move 35s infinite alternate-reverse;
+  }
+
+  /* Fade-in animation for cards */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+  }
+
+  /* Pulsing accent */
+  .pulse-accent {
+    animation: pulse-accent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-accent {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgba(236, 72, 153, 0);
+    }
+  }
+
+  /* Form label utility */
+  .label-xs {
+    @apply block text-xs font-bold uppercase tracking-widest ml-1;
+    color: rgba(165, 180, 252, 0.7);
+  }
+
+  /* Card grid */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Custom input */
+  .custom-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 16px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+    width: 100%;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.875rem;
+  }
+
+  .custom-input:focus {
+    border-color: oklch(var(--secondary));
+    box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.1);
+  }
+
+  select.custom-input option {
+    background-color: #0f172a;
+    color: white;
+  }
+
+  /* Active nav state */
+  .active-nav {
+    @apply glass;
+    background-color: rgba(99, 102, 241, 0.2);
+    border-left: 4px solid oklch(var(--secondary));
+    @apply text-secondary;
+  }
+}

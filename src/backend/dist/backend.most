@@ -1,0 +1,114 @@
+// Version: 1.0.0
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Deployment__227264288 =
+  {
+    architecture : Text;
+    callerId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    deployedUrl : Text;
+    engineType : Text;
+    githubUrl : Text;
+    id : Nat;
+    name : Text
+  };
+type Idea__193744222 =
+  {
+    callerId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    deadline : Text;
+    description : Text;
+    googleUrl : Text;
+    id : Nat;
+    ideaType : Text;
+    instaUrl : Text;
+    name : Text;
+    photoUrl : ?Text;
+    place : Text;
+    problem : Text;
+    status : Text;
+    youtubeUrl : Text
+  };
+type IncubatorProject__890840256 =
+  {
+    callerId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    docFileName : ?Text;
+    googleUrl : Text;
+    id : Nat;
+    imageUrl : ?Text;
+    instaUrl : Text;
+    name : Text;
+    pptFileName : ?Text;
+    srcFileName : ?Text;
+    youtubeUrl : Text
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Task__431803600 =
+  {
+    callerId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    description : Text;
+    id : Nat;
+    taskDate : Text;
+    taskTime : Text
+  };
+type Timestamp__301639476 = Int;
+type UserId__158757552 = Principal;
+type UserProfile__792981527 =
+  {
+    displayName : Text;
+    email : Text;
+    principal : UserId__158757552;
+    profilePhotoUrl : ?Text
+  };
+type WebLink__887739773 =
+  {callerId : UserId__158757552; id : Nat; title : Text; url : Text};
+actor {
+  stable var _deploymentCounter : Nat;
+  stable var _ideaCounter : Nat;
+  stable var _incubatorCounter : Nat;
+  stable var _taskCounter : Nat;
+  stable var _webLinkCounter : Nat;
+  stable deployments :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Deployment__227264288]];
+      var elementIndex : Nat__490723111
+    };
+  stable ideas :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Idea__193744222]];
+      var elementIndex : Nat__490723111
+    };
+  stable incubatorProjects :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?IncubatorProject__890840256]];
+      var elementIndex : Nat__490723111
+    };
+  stable profiles :
+    {
+      var root : Node__46230540<UserId__158757552, UserProfile__792981527>;
+      var size : Nat__490723111
+    };
+  stable tasks :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Task__431803600]];
+      var elementIndex : Nat__490723111
+    };
+  stable webLinks :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?WebLink__887739773]];
+      var elementIndex : Nat__490723111
+    }
+};
