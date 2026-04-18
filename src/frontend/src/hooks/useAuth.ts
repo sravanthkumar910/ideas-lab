@@ -1,29 +1,90 @@
-import { useState } from "react";
+import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
+import { useCallback, useEffect, useState } from "react";
+import { createActor } from "../backend";
 import type { UserProfile } from "../types";
 
-const DEFAULT_PROFILE: UserProfile = {
-  name: "Dr. Jane Doe",
-  email: "jane.doe@innovation.lab",
-  photo:
-    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=250&q=80",
-};
-
 export function useAuth() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
+  const { isAuthenticated, isInitializing, identity, login, clear } =
+    useInternetIdentity();
+  const { actor, isFetching } = useActor(createActor);
 
-  const login = (username: string) => {
-    setProfile((prev) => ({ ...prev, name: username }));
-    setLoggedIn(true);
+  const [profile, setProfile] = useState<UserProfile>({
+    displayName: "Innovator",
+    email: "",
+    profilePhotoUrl: undefined,
+  });
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  // Load profile from backend once actor is ready and user is authenticated
+  useEffect(() => {
+    if (!actor || isFetching || !isAuthenticated || profileLoaded) return;
+
+    actor
+      .getUserProfile()
+      .then((p) => {
+        if (p) {
+          setProfile({
+            displayName: p.displayName || "Innovator",
+            email: p.email || "",
+            profilePhotoUrl: p.profilePhotoUrl,
+          });
+        }
+        setProfileLoaded(true);
+      })
+      .catch(() => {
+        setProfileLoaded(true);
+      });
+  }, [actor, isFetching, isAuthenticated, profileLoaded]);
+
+  // Reset on logout
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setProfileLoaded(false);
+      setProfile({
+        displayName: "Innovator",
+        email: "",
+        profilePhotoUrl: undefined,
+      });
+    }
+  }, [isAuthenticated]);
+
+  const updateProfile = useCallback(
+    async (updates: Partial<UserProfile>) => {
+      const merged = { ...profile, ...updates };
+      setProfile(merged);
+
+      if (!actor) return;
+      try {
+        const saved = await actor.saveUserProfile(
+          merged.displayName,
+          merged.email,
+          merged.profilePhotoUrl ?? null,
+        );
+        setProfile({
+          displayName: saved.displayName,
+          email: saved.email,
+          profilePhotoUrl: saved.profilePhotoUrl,
+        });
+      } catch {
+        // profile state is already updated locally
+      }
+    },
+    [actor, profile],
+  );
+
+  const logout = useCallback(() => {
+    clear();
+  }, [clear]);
+
+  return {
+    loggedIn: isAuthenticated && !isInitializing,
+    isInitializing,
+    profile,
+    identity,
+    actor,
+    actorReady: !!actor && !isFetching,
+    login,
+    logout,
+    updateProfile,
   };
-
-  const logout = () => {
-    setLoggedIn(false);
-  };
-
-  const updateProfile = (updates: Partial<UserProfile>) => {
-    setProfile((prev) => ({ ...prev, ...updates }));
-  };
-
-  return { loggedIn, profile, login, logout, updateProfile };
 }

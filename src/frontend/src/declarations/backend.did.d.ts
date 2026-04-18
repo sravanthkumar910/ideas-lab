@@ -98,6 +98,41 @@ export interface Task {
   'callerId' : UserId,
 }
 export type Timestamp = bigint;
+export interface UpdateDeploymentParams {
+  'name' : string,
+  'architecture' : string,
+  'githubUrl' : string,
+  'deployedUrl' : string,
+  'engineType' : string,
+}
+export interface UpdateIdeaParams {
+  'status' : string,
+  'ideaType' : string,
+  'name' : string,
+  'googleUrl' : string,
+  'instaUrl' : string,
+  'description' : string,
+  'photoUrl' : [] | [string],
+  'deadline' : string,
+  'place' : string,
+  'youtubeUrl' : string,
+  'problem' : string,
+}
+export interface UpdateIncubatorParams {
+  'name' : string,
+  'pptFileName' : [] | [string],
+  'srcFileName' : [] | [string],
+  'googleUrl' : string,
+  'instaUrl' : string,
+  'imageUrl' : [] | [string],
+  'docFileName' : [] | [string],
+  'youtubeUrl' : string,
+}
+export interface UpdateTaskParams {
+  'description' : string,
+  'taskDate' : string,
+  'taskTime' : string,
+}
 export type UserId = Principal;
 export interface UserProfile {
   'principal' : UserId,
@@ -133,6 +168,26 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getWebLinks' : ActorMethod<[], Array<WebLink>>,
   'saveUserProfile' : ActorMethod<[string, string, [] | [string]], UserProfile>,
+  'updateDeployment' : ActorMethod<
+    [bigint, UpdateDeploymentParams],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'updateIdea' : ActorMethod<
+    [bigint, UpdateIdeaParams],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'updateIncubatorProject' : ActorMethod<
+    [bigint, UpdateIncubatorParams],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
+  'updateTask' : ActorMethod<
+    [bigint, UpdateTaskParams],
+    { 'ok' : null } |
+      { 'err' : string }
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

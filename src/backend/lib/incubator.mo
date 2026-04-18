@@ -45,4 +45,31 @@ module {
     projects.append(filtered);
     projects.size() < sizeBefore;
   };
+
+  public func update(
+    projects : List.List<Types.IncubatorProject>,
+    _caller : Common.UserId,
+    id : Nat,
+    params : Types.UpdateIncubatorParams,
+  ) : { #ok; #err : Text } {
+    var found = false;
+    projects.mapInPlace(
+      func(project) {
+        if (project.id == id) {
+          found := true;
+          { project with
+            name = params.name;
+            imageUrl = params.imageUrl;
+            pptFileName = params.pptFileName;
+            docFileName = params.docFileName;
+            srcFileName = params.srcFileName;
+            youtubeUrl = params.youtubeUrl;
+            instaUrl = params.instaUrl;
+            googleUrl = params.googleUrl;
+          };
+        } else { project };
+      }
+    );
+    if (found) #ok else #err("Incubator project not found");
+  };
 };

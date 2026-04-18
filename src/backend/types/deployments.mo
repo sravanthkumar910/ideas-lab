@@ -19,4 +19,12 @@ module {
     engineType : Text;
     architecture : Text;
   };
+
+  public type UpdateDeploymentParams = {
+    name : Text;
+    deployedUrl : Text;
+    githubUrl : Text;
+    engineType : Text;
+    architecture : Text;
+  };
 };

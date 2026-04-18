@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink, X } from "lucide-react";
 import { useState } from "react";
 import { SiGithub } from "react-icons/si";
@@ -6,8 +7,9 @@ import type { Architecture, Deployment, EngineType } from "../types";
 
 interface DeploymentPageProps {
   deployments: Deployment[];
-  onAdd: (deployment: Omit<Deployment, "id">) => void;
-  onRemove: (id: number) => void;
+  onAdd: (deployment: Omit<Deployment, "id">) => Promise<void>;
+  onRemove: (id: bigint) => Promise<void>;
+  isLoading?: boolean;
 }
 
 const ENGINE_TYPES: EngineType[] = [
@@ -22,39 +24,51 @@ export function DeploymentPage({
   deployments,
   onAdd,
   onRemove,
+  isLoading = false,
 }: DeploymentPageProps) {
   const [depName, setDepName] = useState("");
   const [depUrl, setDepUrl] = useState("");
   const [depGithub, setDepGithub] = useState("");
   const [depEngine, setDepEngine] = useState<EngineType>("Frontend");
   const [depArch, setDepArch] = useState<Architecture>("Dynamic");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const name = depName;
-    onAdd({
-      name,
-      url: depUrl,
-      github: depGithub,
-      engine: depEngine,
-      arch: depArch,
-    });
-    setDepName("");
-    setDepUrl("");
-    setDepGithub("");
-    setDepEngine("Frontend");
-    setDepArch("Dynamic");
-    toast.success(`Execution Successful: ${name}`);
+    setSubmitting(true);
+    try {
+      await onAdd({
+        name,
+        deployedUrl: depUrl,
+        githubUrl: depGithub,
+        engineType: depEngine,
+        architecture: depArch,
+      });
+      setDepName("");
+      setDepUrl("");
+      setDepGithub("");
+      setDepEngine("Frontend");
+      setDepArch("Dynamic");
+      toast.success(`Execution Successful: ${name}`);
+    } catch {
+      toast.error("Failed to register deployment. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDelete = (deployment: Deployment) => {
-    onRemove(deployment.id);
-    toast.success("Deployment terminated.");
+  const handleDelete = async (deployment: Deployment) => {
+    try {
+      await onRemove(deployment.id);
+      toast.success("Deployment terminated.");
+    } catch {
+      toast.error("Failed to remove deployment.");
+    }
   };
 
   return (
     <div className="space-y-8" data-ocid="deployment.section">
-      {/* Form panel */}
       <div className="glass p-8 rounded-[2.5rem]">
         <h3 className="text-2xl font-display font-bold mb-8 text-foreground">
           New Deployment Protocol
@@ -64,7 +78,6 @@ export function DeploymentPage({
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           data-ocid="deployment.form"
         >
-          {/* Project name — full width */}
           <div className="space-y-2 md:col-span-2">
             <label htmlFor="dep-name" className="label-xs">
               Target Project Name
@@ -81,7 +94,6 @@ export function DeploymentPage({
             />
           </div>
 
-          {/* Deployed URL */}
           <div className="space-y-2">
             <label htmlFor="dep-url" className="label-xs">
               Public Deployed URL
@@ -98,7 +110,6 @@ export function DeploymentPage({
             />
           </div>
 
-          {/* GitHub */}
           <div className="space-y-2">
             <label htmlFor="dep-github" className="label-xs">
               GitHub Repository
@@ -114,7 +125,6 @@ export function DeploymentPage({
             />
           </div>
 
-          {/* Engine + Architecture selects */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="dep-engine" className="label-xs">
@@ -150,7 +160,6 @@ export function DeploymentPage({
             </div>
           </div>
 
-          {/* Asset uploads */}
           <div className="space-y-2">
             <label htmlFor="dep-assets" className="label-xs">
               Asset Uploads (Photos/Videos)
@@ -164,21 +173,39 @@ export function DeploymentPage({
             />
           </div>
 
-          {/* Submit */}
           <div className="md:col-span-2 text-right pt-2">
             <button
               type="submit"
+              disabled={submitting}
               data-ocid="deployment.submit_button"
-              className="bg-primary px-10 py-3.5 rounded-2xl font-bold hover:bg-primary/80 shadow-elevated text-primary-foreground transition-smooth"
+              className="bg-primary px-10 py-3.5 rounded-2xl font-bold hover:bg-primary/80 shadow-elevated text-primary-foreground transition-smooth disabled:opacity-60"
             >
-              Execute Deployment
+              {submitting ? "Executing..." : "Execute Deployment"}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Cards */}
-      {deployments.length === 0 ? (
+      {isLoading ? (
+        <div className="card-grid" data-ocid="deployment.loading_state">
+          {[1, 2].map((n) => (
+            <div key={n} className="glass p-8 rounded-[2.5rem] space-y-4">
+              <Skeleton
+                className="h-5 w-2/3"
+                style={{ background: "rgba(255,255,255,0.06)" }}
+              />
+              <Skeleton
+                className="h-3 w-1/3"
+                style={{ background: "rgba(255,255,255,0.04)" }}
+              />
+              <Skeleton
+                className="h-10 w-full rounded-xl"
+                style={{ background: "rgba(255,255,255,0.04)" }}
+              />
+            </div>
+          ))}
+        </div>
+      ) : deployments.length === 0 ? (
         <div
           className="glass rounded-3xl p-16 text-center"
           data-ocid="deployment.empty_state"
@@ -200,7 +227,7 @@ export function DeploymentPage({
         <div className="card-grid pb-20" data-ocid="deployment.list">
           {deployments.map((d, i) => (
             <DeploymentCard
-              key={d.id}
+              key={String(d.id)}
               deployment={d}
               index={i}
               onDelete={handleDelete}
@@ -215,7 +242,7 @@ export function DeploymentPage({
 interface DeploymentCardProps {
   deployment: Deployment;
   index: number;
-  onDelete: (deployment: Deployment) => void;
+  onDelete: (deployment: Deployment) => Promise<void>;
 }
 
 function DeploymentCard({
@@ -229,27 +256,24 @@ function DeploymentCard({
       style={{ borderBottom: "2px solid rgba(99,102,241,0.2)" }}
       data-ocid={`deployment.item.${index + 1}`}
     >
-      {/* Header row */}
       <div className="flex justify-between items-start mb-6">
         <div className="min-w-0 pr-4">
           <h4 className="text-xl font-display font-bold text-foreground truncate">
             {d.name}
           </h4>
           <p className="text-[10px] text-primary font-bold uppercase tracking-widest mt-1">
-            {d.engine} • {d.arch}
+            {d.engineType} • {d.architecture}
           </p>
         </div>
-        {/* Green live pulse dot */}
         <span
           className="w-2.5 h-2.5 rounded-full bg-chart-2 animate-pulse shrink-0 mt-1"
           aria-label="Live"
         />
       </div>
 
-      {/* Links */}
       <div className="space-y-3 mb-6">
         <a
-          href={d.url}
+          href={d.deployedUrl}
           target="_blank"
           rel="noreferrer"
           className="flex items-center gap-3 glass-hover p-3 rounded-xl text-xs font-bold text-foreground/70 hover:text-foreground transition-smooth"
@@ -258,9 +282,9 @@ function DeploymentCard({
           <ExternalLink className="w-4 h-4 text-primary shrink-0" />
           Open Deployment
         </a>
-        {d.github && (
+        {d.githubUrl && (
           <a
-            href={d.github}
+            href={d.githubUrl}
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-3 glass-hover p-3 rounded-xl text-xs font-bold text-foreground/70 hover:text-foreground transition-smooth"
@@ -272,7 +296,6 @@ function DeploymentCard({
         )}
       </div>
 
-      {/* Full-width indigo progress bar (decorative) */}
       <div
         className="h-1 rounded-full overflow-hidden"
         style={{ background: "rgba(255,255,255,0.05)" }}
@@ -280,10 +303,9 @@ function DeploymentCard({
         <div className="bg-primary w-full h-full" />
       </div>
 
-      {/* Delete button — appears on hover at top-right */}
       <button
         type="button"
-        onClick={() => onDelete(d)}
+        onClick={() => void onDelete(d)}
         className="absolute -top-2 -right-2 w-8 h-8 bg-destructive rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth shadow-elevated"
         aria-label={`Remove ${d.name}`}
         data-ocid={`deployment.delete_button.${index + 1}`}

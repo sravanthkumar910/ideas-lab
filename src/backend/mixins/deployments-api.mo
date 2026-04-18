@@ -25,4 +25,9 @@ mixin (
     if (caller.isAnonymous()) Runtime.trap("Authentication required");
     DeploymentsLib.delete(deployments, caller, id);
   };
+
+  public shared ({ caller }) func updateDeployment(id : Nat, params : DeploymentsTypes.UpdateDeploymentParams) : async { #ok; #err : Text } {
+    if (caller.isAnonymous()) Runtime.trap("Authentication required");
+    DeploymentsLib.update(deployments, caller, id, params);
+  };
 };

@@ -40,4 +40,26 @@ module {
     tasks.append(filtered);
     tasks.size() < sizeBefore;
   };
+
+  public func update(
+    tasks : List.List<Types.Task>,
+    _caller : Common.UserId,
+    id : Nat,
+    params : Types.UpdateTaskParams,
+  ) : { #ok; #err : Text } {
+    var found = false;
+    tasks.mapInPlace(
+      func(task) {
+        if (task.id == id) {
+          found := true;
+          { task with
+            description = params.description;
+            taskDate = params.taskDate;
+            taskTime = params.taskTime;
+          };
+        } else { task };
+      }
+    );
+    if (found) #ok else #err("Task not found");
+  };
 };

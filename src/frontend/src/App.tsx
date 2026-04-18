@@ -13,9 +13,33 @@ import { TasksPage } from "./pages/TasksPage";
 import type { TabId } from "./types";
 
 export default function App() {
-  const { loggedIn, profile, login, logout, updateProfile } = useAuth();
-  const backend = useBackend();
+  const {
+    loggedIn,
+    isInitializing,
+    profile,
+    actor,
+    actorReady,
+    login,
+    logout,
+    updateProfile,
+  } = useAuth();
+  const backend = useBackend({ actor, actorReady });
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+
+  // While Internet Identity is initializing, show loading
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        <BlobBackground />
+        <div className="relative z-10 text-center">
+          <div className="w-16 h-16 rounded-full border-2 border-primary/30 border-t-primary animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground text-sm font-semibold uppercase tracking-widest">
+            Initializing Identity...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!loggedIn) {
     return (
@@ -33,9 +57,10 @@ export default function App() {
       case "overview":
         return (
           <DashboardPage
-            liveCount={backend.deployments.length}
-            completedCount={backend.incubatorProjects.length}
-            pendingCount={backend.ideas.length}
+            liveCount={backend.dashboardStats.liveProjects}
+            completedCount={backend.dashboardStats.completedProjects}
+            pendingCount={backend.dashboardStats.pendingIdeas}
+            isLoading={backend.statsLoading}
           />
         );
       case "ideas":
@@ -44,6 +69,7 @@ export default function App() {
             ideas={backend.ideas}
             onAdd={backend.addIdea}
             onRemove={backend.removeIdea}
+            isLoading={backend.ideasLoading}
           />
         );
       case "incubator":
@@ -52,6 +78,7 @@ export default function App() {
             projects={backend.incubatorProjects}
             onAdd={backend.addIncubatorProject}
             onRemove={backend.removeIncubatorProject}
+            isLoading={backend.projectsLoading}
           />
         );
       case "tasks":
@@ -60,6 +87,7 @@ export default function App() {
             tasks={backend.tasks}
             createTask={backend.addTask}
             deleteTask={backend.removeTask}
+            isLoading={backend.tasksLoading}
           />
         );
       case "uploads":
@@ -68,6 +96,7 @@ export default function App() {
             deployments={backend.deployments}
             onAdd={backend.addDeployment}
             onRemove={backend.removeDeployment}
+            isLoading={backend.deploymentsLoading}
           />
         );
       case "settings":
@@ -78,6 +107,7 @@ export default function App() {
             onUpdateProfile={updateProfile}
             onAddLink={backend.addWebLink}
             onRemoveLink={backend.removeWebLink}
+            isLoading={backend.settingsLoading}
           />
         );
       default:

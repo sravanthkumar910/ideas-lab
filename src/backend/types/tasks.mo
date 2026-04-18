@@ -15,4 +15,10 @@ module {
     taskDate : Text;
     taskTime : Text;
   };
+
+  public type UpdateTaskParams = {
+    description : Text;
+    taskDate : Text;
+    taskTime : Text;
+  };
 };

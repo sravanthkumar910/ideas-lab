@@ -25,4 +25,9 @@ mixin (
     if (caller.isAnonymous()) Runtime.trap("Authentication required");
     IdeasLib.delete(ideas, caller, id);
   };
+
+  public shared ({ caller }) func updateIdea(id : Nat, params : IdeasTypes.UpdateIdeaParams) : async { #ok; #err : Text } {
+    if (caller.isAnonymous()) Runtime.trap("Authentication required");
+    IdeasLib.update(ideas, caller, id, params);
+  };
 };

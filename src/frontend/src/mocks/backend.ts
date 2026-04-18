@@ -237,4 +237,9 @@ export const mockBackend: backendInterface = {
     email,
     profilePhotoUrl: profilePhotoUrl ?? undefined,
   }),
+
+  updateDeployment: async () => ({ __kind__: "ok" as const, ok: null }),
+  updateIdea: async () => ({ __kind__: "ok" as const, ok: null }),
+  updateIncubatorProject: async () => ({ __kind__: "ok" as const, ok: null }),
+  updateTask: async () => ({ __kind__: "ok" as const, ok: null }),
 };

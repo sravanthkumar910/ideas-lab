@@ -89,7 +89,6 @@ export class ExternalBlob {
         return this;
     }
 }
-export type UserId = Principal;
 export type Timestamp = bigint;
 export interface Deployment {
     id: bigint;
@@ -114,18 +113,10 @@ export interface CreateIdeaParams {
     youtubeUrl: string;
     problem: string;
 }
-export interface IncubatorProject {
-    id: bigint;
-    name: string;
-    createdAt: Timestamp;
-    pptFileName?: string;
-    srcFileName?: string;
-    googleUrl: string;
-    instaUrl: string;
-    callerId: UserId;
-    imageUrl?: string;
-    docFileName?: string;
-    youtubeUrl: string;
+export interface UpdateTaskParams {
+    description: string;
+    taskDate: string;
+    taskTime: string;
 }
 export interface Task {
     id: bigint;
@@ -140,6 +131,19 @@ export interface WebLink {
     url: string;
     title: string;
     callerId: UserId;
+}
+export interface IncubatorProject {
+    id: bigint;
+    name: string;
+    createdAt: Timestamp;
+    pptFileName?: string;
+    srcFileName?: string;
+    googleUrl: string;
+    instaUrl: string;
+    callerId: UserId;
+    imageUrl?: string;
+    docFileName?: string;
+    youtubeUrl: string;
 }
 export interface Idea {
     id: bigint;
@@ -157,6 +161,29 @@ export interface Idea {
     youtubeUrl: string;
     problem: string;
 }
+export interface CreateTaskParams {
+    description: string;
+    taskDate: string;
+    taskTime: string;
+}
+export interface UpdateIdeaParams {
+    status: string;
+    ideaType: string;
+    name: string;
+    googleUrl: string;
+    instaUrl: string;
+    description: string;
+    photoUrl?: string;
+    deadline: string;
+    place: string;
+    youtubeUrl: string;
+    problem: string;
+}
+export interface DashboardStats {
+    pendingIdeas: bigint;
+    liveProjects: bigint;
+    completedProjects: bigint;
+}
 export interface CreateIncubatorParams {
     name: string;
     pptFileName?: string;
@@ -167,21 +194,23 @@ export interface CreateIncubatorParams {
     docFileName?: string;
     youtubeUrl: string;
 }
-export interface CreateTaskParams {
-    description: string;
-    taskDate: string;
-    taskTime: string;
+export type UserId = Principal;
+export interface UpdateDeploymentParams {
+    name: string;
+    architecture: string;
+    githubUrl: string;
+    deployedUrl: string;
+    engineType: string;
 }
-export interface DashboardStats {
-    pendingIdeas: bigint;
-    liveProjects: bigint;
-    completedProjects: bigint;
-}
-export interface UserProfile {
-    principal: UserId;
-    displayName: string;
-    email: string;
-    profilePhotoUrl?: string;
+export interface UpdateIncubatorParams {
+    name: string;
+    pptFileName?: string;
+    srcFileName?: string;
+    googleUrl: string;
+    instaUrl: string;
+    imageUrl?: string;
+    docFileName?: string;
+    youtubeUrl: string;
 }
 export interface CreateDeploymentParams {
     name: string;
@@ -189,6 +218,12 @@ export interface CreateDeploymentParams {
     githubUrl: string;
     deployedUrl: string;
     engineType: string;
+}
+export interface UserProfile {
+    principal: UserId;
+    displayName: string;
+    email: string;
+    profilePhotoUrl?: string;
 }
 export interface backendInterface {
     addWebLink(title: string, url: string): Promise<WebLink>;
@@ -209,8 +244,36 @@ export interface backendInterface {
     getUserProfile(): Promise<UserProfile | null>;
     getWebLinks(): Promise<Array<WebLink>>;
     saveUserProfile(displayName: string, email: string, profilePhotoUrl: string | null): Promise<UserProfile>;
+    updateDeployment(id: bigint, params: UpdateDeploymentParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    updateIdea(id: bigint, params: UpdateIdeaParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    updateIncubatorProject(id: bigint, params: UpdateIncubatorParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
+    updateTask(id: bigint, params: UpdateTaskParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }>;
 }
-import type { CreateIdeaParams as _CreateIdeaParams, CreateIncubatorParams as _CreateIncubatorParams, Idea as _Idea, IncubatorProject as _IncubatorProject, Timestamp as _Timestamp, UserId as _UserId, UserProfile as _UserProfile } from "./declarations/backend.did.d.ts";
+import type { CreateIdeaParams as _CreateIdeaParams, CreateIncubatorParams as _CreateIncubatorParams, Idea as _Idea, IncubatorProject as _IncubatorProject, Timestamp as _Timestamp, UpdateIdeaParams as _UpdateIdeaParams, UpdateIncubatorParams as _UpdateIncubatorParams, UserId as _UserId, UserProfile as _UserProfile } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async addWebLink(arg0: string, arg1: string): Promise<WebLink> {
@@ -465,6 +528,86 @@ export class Backend implements backendInterface {
             return from_candid_UserProfile_n13(this._uploadFile, this._downloadFile, result);
         }
     }
+    async updateDeployment(arg0: bigint, arg1: UpdateDeploymentParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateDeployment(arg0, arg1);
+                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateDeployment(arg0, arg1);
+            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateIdea(arg0: bigint, arg1: UpdateIdeaParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateIdea(arg0, to_candid_UpdateIdeaParams_n17(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateIdea(arg0, to_candid_UpdateIdeaParams_n17(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateIncubatorProject(arg0: bigint, arg1: UpdateIncubatorParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateIncubatorProject(arg0, to_candid_UpdateIncubatorParams_n18(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateIncubatorProject(arg0, to_candid_UpdateIncubatorParams_n18(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateTask(arg0: bigint, arg1: UpdateTaskParams): Promise<{
+        __kind__: "ok";
+        ok: null;
+    } | {
+        __kind__: "err";
+        err: string;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateTask(arg0, arg1);
+                return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateTask(arg0, arg1);
+            return from_candid_variant_n16(this._uploadFile, this._downloadFile, result);
+        }
+    }
 }
 function from_candid_Idea_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Idea): Idea {
     return from_candid_record_n4(_uploadFile, _downloadFile, value);
@@ -586,6 +729,25 @@ function from_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint
         youtubeUrl: value.youtubeUrl
     };
 }
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: null;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
 function from_candid_vec_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Idea>): Array<Idea> {
     return value.map((x)=>from_candid_Idea_n3(_uploadFile, _downloadFile, x));
 }
@@ -596,6 +758,12 @@ function to_candid_CreateIdeaParams_n1(_uploadFile: (file: ExternalBlob) => Prom
     return to_candid_record_n2(_uploadFile, _downloadFile, value);
 }
 function to_candid_CreateIncubatorParams_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CreateIncubatorParams): _CreateIncubatorParams {
+    return to_candid_record_n7(_uploadFile, _downloadFile, value);
+}
+function to_candid_UpdateIdeaParams_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UpdateIdeaParams): _UpdateIdeaParams {
+    return to_candid_record_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_UpdateIncubatorParams_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UpdateIncubatorParams): _UpdateIncubatorParams {
     return to_candid_record_n7(_uploadFile, _downloadFile, value);
 }
 function to_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {

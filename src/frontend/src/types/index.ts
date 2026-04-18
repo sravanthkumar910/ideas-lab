@@ -1,63 +1,64 @@
+// Frontend types aligned with backend field names from backend.d.ts
+
 export type IdeaStatus = "Drafting" | "Researching" | "Reviewing";
 export type IdeaType = "Software" | "Hardware" | "Hybrid";
 
 export interface Idea {
-  id: number;
+  id: bigint;
   name: string;
   place: string;
   problem: string;
   description: string;
   deadline: string;
-  type: IdeaType;
-  status: IdeaStatus;
-  youtube: string;
-  insta: string;
-  google: string;
-  photo: string | null;
+  ideaType: string;
+  status: string;
+  youtubeUrl: string;
+  instaUrl: string;
+  googleUrl: string;
+  photoUrl?: string;
 }
 
 export interface IncubatorProject {
-  id: number;
+  id: bigint;
   name: string;
-  youtube: string;
-  insta: string;
-  google: string;
-  photo: string | null;
-  ppt: { url: string; name: string } | null;
-  doc: { url: string; name: string } | null;
-  src: { url: string; name: string } | null;
+  youtubeUrl: string;
+  instaUrl: string;
+  googleUrl: string;
+  imageUrl?: string;
+  pptFileName?: string;
+  docFileName?: string;
+  srcFileName?: string;
 }
 
 export type EngineType = "Frontend" | "Backend" | "Full-Stack" | "Mobile App";
 export type Architecture = "Dynamic" | "Static" | "Serverless";
 
 export interface Deployment {
-  id: number;
+  id: bigint;
   name: string;
-  url: string;
-  github: string;
-  engine: EngineType;
-  arch: Architecture;
+  deployedUrl: string;
+  githubUrl: string;
+  engineType: string;
+  architecture: string;
 }
 
 export interface Task {
-  id: number;
-  name: string;
-  time: string;
-  date: string;
-  done: boolean;
+  id: bigint;
+  description: string;
+  taskTime: string;
+  taskDate: string;
 }
 
 export interface WebLink {
-  id: number;
+  id: bigint;
   title: string;
   url: string;
 }
 
 export interface UserProfile {
-  name: string;
+  displayName: string;
   email: string;
-  photo: string;
+  profilePhotoUrl?: string;
 }
 
 export type TabId =
@@ -69,7 +70,7 @@ export type TabId =
   | "settings";
 
 export interface DashboardStats {
-  live: number;
-  completed: number;
-  pending: number;
+  liveProjects: number;
+  completedProjects: number;
+  pendingIdeas: number;
 }

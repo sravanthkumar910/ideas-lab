@@ -48,4 +48,34 @@ module {
     ideas.append(filtered);
     ideas.size() < sizeBefore;
   };
+
+  public func update(
+    ideas : List.List<Types.Idea>,
+    _caller : Common.UserId,
+    id : Nat,
+    params : Types.UpdateIdeaParams,
+  ) : { #ok; #err : Text } {
+    var found = false;
+    ideas.mapInPlace(
+      func(idea) {
+        if (idea.id == id) {
+          found := true;
+          { idea with
+            name = params.name;
+            deadline = params.deadline;
+            photoUrl = params.photoUrl;
+            place = params.place;
+            problem = params.problem;
+            description = params.description;
+            ideaType = params.ideaType;
+            status = params.status;
+            youtubeUrl = params.youtubeUrl;
+            instaUrl = params.instaUrl;
+            googleUrl = params.googleUrl;
+          };
+        } else { idea };
+      }
+    );
+    if (found) #ok else #err("Idea not found");
+  };
 };

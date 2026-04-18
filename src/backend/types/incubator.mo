@@ -25,4 +25,15 @@ module {
     instaUrl : Text;
     googleUrl : Text;
   };
+
+  public type UpdateIncubatorParams = {
+    name : Text;
+    imageUrl : ?Text;
+    pptFileName : ?Text;
+    docFileName : ?Text;
+    srcFileName : ?Text;
+    youtubeUrl : Text;
+    instaUrl : Text;
+    googleUrl : Text;
+  };
 };

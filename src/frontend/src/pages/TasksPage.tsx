@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -5,40 +6,55 @@ import type { Task } from "../types";
 
 interface TasksPageProps {
   tasks: Task[];
-  createTask: (task: Omit<Task, "id">) => void;
-  deleteTask: (id: number) => void;
+  createTask: (task: Omit<Task, "id">) => Promise<void>;
+  deleteTask: (id: bigint) => Promise<void>;
+  isLoading?: boolean;
 }
 
-export function TasksPage({ tasks, createTask, deleteTask }: TasksPageProps) {
+export function TasksPage({
+  tasks,
+  createTask,
+  deleteTask,
+  isLoading = false,
+}: TasksPageProps) {
   const [taskInput, setTaskInput] = useState("");
   const [taskTime, setTaskTime] = useState("");
   const [taskDate, setTaskDate] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    createTask({
-      name: taskInput,
-      time: taskTime,
-      date: taskDate,
-      done: false,
-    });
-    setTaskInput("");
-    setTaskTime("");
-    setTaskDate("");
-    toast.success("Sequential task logged.");
+    setSubmitting(true);
+    try {
+      await createTask({
+        description: taskInput,
+        taskTime,
+        taskDate,
+      });
+      setTaskInput("");
+      setTaskTime("");
+      setTaskDate("");
+      toast.success("Sequential task logged.");
+    } catch {
+      toast.error("Failed to save task. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    deleteTask(id);
-    toast.success("Task removed.");
+  const handleDelete = async (id: bigint) => {
+    try {
+      await deleteTask(id);
+      toast.success("Task removed.");
+    } catch {
+      toast.error("Failed to remove task.");
+    }
   };
 
-  // Most recent tasks appear first
   const reversedTasks = [...tasks].reverse();
 
   return (
     <div className="space-y-8" data-ocid="tasks.section">
-      {/* Form Panel */}
       <div
         className="rounded-[2.5rem] p-8"
         style={{
@@ -83,21 +99,49 @@ export function TasksPage({ tasks, createTask, deleteTask }: TasksPageProps) {
             />
             <button
               type="submit"
+              disabled={submitting}
               data-ocid="tasks.submit_button"
-              className="px-8 rounded-xl font-bold transition-all py-2 text-white"
+              className="px-8 rounded-xl font-bold transition-all py-2 text-white disabled:opacity-60"
               style={{
                 background: "rgba(99,102,241,0.85)",
                 boxShadow: "0 4px 24px rgba(99,102,241,0.2)",
               }}
             >
-              Add
+              {submitting ? "..." : "Add"}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Task List */}
-      {tasks.length === 0 ? (
+      {isLoading ? (
+        <div className="space-y-4" data-ocid="tasks.loading_state">
+          {[1, 2, 3].map((n) => (
+            <div
+              key={n}
+              className="p-6 rounded-3xl flex items-center gap-6"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <Skeleton
+                className="w-12 h-12 rounded-2xl shrink-0"
+                style={{ background: "rgba(255,255,255,0.06)" }}
+              />
+              <div className="flex-1 space-y-2">
+                <Skeleton
+                  className="h-4 w-3/4"
+                  style={{ background: "rgba(255,255,255,0.06)" }}
+                />
+                <Skeleton
+                  className="h-3 w-1/3"
+                  style={{ background: "rgba(255,255,255,0.04)" }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : tasks.length === 0 ? (
         <div
           className="rounded-3xl p-16 text-center"
           style={{
@@ -118,11 +162,10 @@ export function TasksPage({ tasks, createTask, deleteTask }: TasksPageProps) {
       ) : (
         <div className="space-y-4 pb-20" data-ocid="tasks.list">
           {reversedTasks.map((task, renderIdx) => {
-            // Stable sequential number = total tasks count minus render position
             const seqNum = tasks.length - renderIdx;
             return (
               <div
-                key={task.id}
+                key={String(task.id)}
                 className="p-6 rounded-3xl flex items-center justify-between transition-all"
                 style={{
                   background: "rgba(255,255,255,0.03)",
@@ -133,7 +176,6 @@ export function TasksPage({ tasks, createTask, deleteTask }: TasksPageProps) {
                 data-ocid={`tasks.item.${renderIdx + 1}`}
               >
                 <div className="flex items-center gap-6 min-w-0">
-                  {/* Sequential badge */}
                   <div
                     className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold shrink-0 text-sm"
                     style={{
@@ -146,16 +188,16 @@ export function TasksPage({ tasks, createTask, deleteTask }: TasksPageProps) {
                   </div>
                   <div className="min-w-0">
                     <h4 className="font-bold text-lg leading-tight truncate text-foreground">
-                      {task.name}
+                      {task.description}
                     </h4>
                     <p className="text-xs text-foreground/40 tracking-widest font-bold uppercase mt-0.5">
-                      {task.date} AT {task.time}
+                      {task.taskDate} AT {task.taskTime}
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleDelete(task.id)}
+                  onClick={() => void handleDelete(task.id)}
                   className="shrink-0 transition-colors ml-4"
                   style={{ color: "rgba(255,255,255,0.2)" }}
                   aria-label="Remove task"

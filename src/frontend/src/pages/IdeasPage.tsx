@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { Globe, Instagram, MapPin, Trash2, Youtube } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -5,74 +6,96 @@ import type { Idea, IdeaStatus, IdeaType } from "../types";
 
 interface IdeasPageProps {
   ideas: Idea[];
-  onAdd: (idea: Omit<Idea, "id">) => void;
-  onRemove: (id: number) => void;
+  onAdd: (idea: Omit<Idea, "id">) => Promise<void>;
+  onRemove: (id: bigint) => Promise<void>;
+  isLoading?: boolean;
 }
 
 const IDEA_TYPES: IdeaType[] = ["Software", "Hardware", "Hybrid"];
 const IDEA_STATUSES: IdeaStatus[] = ["Drafting", "Researching", "Reviewing"];
 
-// Drafting=indigo, Researching=blue, Reviewing=purple
 const STATUS_COLORS: Record<IdeaStatus, string> = {
   Drafting: "text-indigo-300 border border-indigo-500/30 bg-indigo-500/15",
   Researching: "text-blue-300 border border-blue-500/30 bg-blue-500/15",
   Reviewing: "text-purple-300 border border-purple-500/30 bg-purple-500/15",
 };
 
-export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
+function getStatusColor(status: string): string {
+  return (
+    STATUS_COLORS[status as IdeaStatus] ??
+    "text-foreground/50 border border-foreground/10 bg-foreground/5"
+  );
+}
+
+export function IdeasPage({
+  ideas,
+  onAdd,
+  onRemove,
+  isLoading = false,
+}: IdeasPageProps) {
   const [name, setName] = useState("");
   const [place, setPlace] = useState("");
   const [problem, setProblem] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [type, setType] = useState<IdeaType>("Software");
+  const [ideaType, setIdeaType] = useState<IdeaType>("Software");
   const [status, setStatus] = useState<IdeaStatus>("Drafting");
-  const [youtube, setYoutube] = useState("");
-  const [insta, setInsta] = useState("");
-  const [google, setGoogle] = useState("");
-  const [photoDataUrl, setPhotoDataUrl] = useState<string | null>(null);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [instaUrl, setInstaUrl] = useState("");
+  const [googleUrl, setGoogleUrl] = useState("");
+  const [photoDataUrl, setPhotoDataUrl] = useState<string | undefined>(
+    undefined,
+  );
+  const [submitting, setSubmitting] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
-      setPhotoDataUrl(null);
+      setPhotoDataUrl(undefined);
       return;
     }
     const reader = new FileReader();
     reader.onload = (ev) =>
-      setPhotoDataUrl((ev.target?.result as string) ?? null);
+      setPhotoDataUrl((ev.target?.result as string) ?? undefined);
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onAdd({
-      name,
-      place,
-      problem,
-      description,
-      deadline,
-      type,
-      status,
-      youtube,
-      insta,
-      google,
-      photo: photoDataUrl,
-    });
-    setName("");
-    setPlace("");
-    setProblem("");
-    setDescription("");
-    setDeadline("");
-    setType("Software");
-    setStatus("Drafting");
-    setYoutube("");
-    setInsta("");
-    setGoogle("");
-    setPhotoDataUrl(null);
-    if (photoInputRef.current) photoInputRef.current.value = "";
-    toast.success("New idea manifested in system.");
+    setSubmitting(true);
+    try {
+      await onAdd({
+        name,
+        place,
+        problem,
+        description,
+        deadline,
+        ideaType,
+        status,
+        youtubeUrl,
+        instaUrl,
+        googleUrl,
+        photoUrl: photoDataUrl,
+      });
+      setName("");
+      setPlace("");
+      setProblem("");
+      setDescription("");
+      setDeadline("");
+      setIdeaType("Software");
+      setStatus("Drafting");
+      setYoutubeUrl("");
+      setInstaUrl("");
+      setGoogleUrl("");
+      setPhotoDataUrl(undefined);
+      if (photoInputRef.current) photoInputRef.current.value = "";
+      toast.success("New idea manifested in system.");
+    } catch {
+      toast.error("Failed to save idea. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -155,7 +178,7 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
           </div>
           <div className="space-y-2 md:col-span-2">
             <label htmlFor="idea-problem" className="label-xs">
-              Problem Statement & Vision
+              Problem Statement &amp; Vision
             </label>
             <textarea
               id="idea-problem"
@@ -188,8 +211,8 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
               </label>
               <select
                 id="idea-type"
-                value={type}
-                onChange={(e) => setType(e.target.value as IdeaType)}
+                value={ideaType}
+                onChange={(e) => setIdeaType(e.target.value as IdeaType)}
                 className="custom-input"
                 data-ocid="ideas.type.select"
               >
@@ -220,8 +243,8 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
             <div className="grid grid-cols-3 gap-2">
               <input
                 type="url"
-                value={youtube}
-                onChange={(e) => setYoutube(e.target.value)}
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
                 className="custom-input text-[10px]"
                 placeholder="YouTube"
                 aria-label="YouTube URL"
@@ -229,8 +252,8 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
               />
               <input
                 type="url"
-                value={insta}
-                onChange={(e) => setInsta(e.target.value)}
+                value={instaUrl}
+                onChange={(e) => setInstaUrl(e.target.value)}
                 className="custom-input text-[10px]"
                 placeholder="Instagram"
                 aria-label="Instagram URL"
@@ -238,8 +261,8 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
               />
               <input
                 type="url"
-                value={google}
-                onChange={(e) => setGoogle(e.target.value)}
+                value={googleUrl}
+                onChange={(e) => setGoogleUrl(e.target.value)}
                 className="custom-input text-[10px]"
                 placeholder="Cloud"
                 aria-label="Cloud URL"
@@ -250,16 +273,42 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
           <div className="md:col-span-2 text-right">
             <button
               type="submit"
+              disabled={submitting}
               data-ocid="ideas.submit_button"
-              className="bg-primary px-10 py-3.5 rounded-2xl font-bold hover:bg-primary/80 transition-smooth shadow-elevated text-primary-foreground"
+              className="bg-primary px-10 py-3.5 rounded-2xl font-bold hover:bg-primary/80 transition-smooth shadow-elevated text-primary-foreground disabled:opacity-60"
             >
-              Manifest Concept
+              {submitting ? "Saving..." : "Manifest Concept"}
             </button>
           </div>
         </form>
       </div>
 
-      {ideas.length === 0 ? (
+      {isLoading ? (
+        <div className="card-grid" data-ocid="ideas.loading_state">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="glass rounded-[2.5rem] overflow-hidden">
+              <Skeleton
+                className="w-full h-40"
+                style={{ background: "rgba(255,255,255,0.06)" }}
+              />
+              <div className="p-8 space-y-3">
+                <Skeleton
+                  className="h-5 w-3/4"
+                  style={{ background: "rgba(255,255,255,0.06)" }}
+                />
+                <Skeleton
+                  className="h-3 w-1/2"
+                  style={{ background: "rgba(255,255,255,0.04)" }}
+                />
+                <Skeleton
+                  className="h-3 w-2/3"
+                  style={{ background: "rgba(255,255,255,0.04)" }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : ideas.length === 0 ? (
         <div
           className="glass rounded-3xl p-16 text-center"
           data-ocid="ideas.empty_state"
@@ -276,13 +325,13 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
         <div className="card-grid pb-20" data-ocid="ideas.list">
           {ideas.map((idea, i) => (
             <div
-              key={idea.id}
+              key={String(idea.id)}
               className="glass rounded-[2.5rem] relative group animate-fade-in hover:-translate-y-1 transition-smooth overflow-hidden flex flex-col"
               data-ocid={`ideas.item.${i + 1}`}
             >
-              {idea.photo ? (
+              {idea.photoUrl ? (
                 <img
-                  src={idea.photo}
+                  src={idea.photoUrl}
                   alt={idea.name}
                   className="w-full h-40 object-cover opacity-60 group-hover:opacity-100 transition-smooth"
                 />
@@ -300,14 +349,14 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
                     {idea.name}
                   </h3>
                   <span
-                    className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border ${STATUS_COLORS[idea.status]}`}
+                    className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border ${getStatusColor(idea.status)}`}
                   >
                     {idea.status}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs font-bold text-foreground/30 uppercase">
-                    {idea.type}
+                    {idea.ideaType}
                   </span>
                   <span className="text-xs text-primary font-bold">
                     • Due {idea.deadline}
@@ -328,9 +377,9 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
                   </div>
                 )}
                 <div className="flex gap-4 mb-4">
-                  {idea.youtube && (
+                  {idea.youtubeUrl && (
                     <a
-                      href={idea.youtube}
+                      href={idea.youtubeUrl}
                       target="_blank"
                       rel="noreferrer"
                       aria-label="YouTube"
@@ -338,9 +387,9 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
                       <Youtube className="w-5 h-5 text-foreground/30 hover:text-red-500 transition-colors" />
                     </a>
                   )}
-                  {idea.insta && (
+                  {idea.instaUrl && (
                     <a
-                      href={idea.insta}
+                      href={idea.instaUrl}
                       target="_blank"
                       rel="noreferrer"
                       aria-label="Instagram"
@@ -348,9 +397,9 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
                       <Instagram className="w-5 h-5 text-foreground/30 hover:text-pink-500 transition-colors" />
                     </a>
                   )}
-                  {idea.google && (
+                  {idea.googleUrl && (
                     <a
-                      href={idea.google}
+                      href={idea.googleUrl}
                       target="_blank"
                       rel="noreferrer"
                       aria-label="Cloud Link"
@@ -366,8 +415,9 @@ export function IdeasPage({ ideas, onAdd, onRemove }: IdeasPageProps) {
                   <button
                     type="button"
                     onClick={() => {
-                      onRemove(idea.id);
-                      toast.success(`"${idea.name}" removed from Ideas Lab.`);
+                      void onRemove(idea.id).then(() =>
+                        toast.success(`"${idea.name}" removed from Ideas Lab.`),
+                      );
                     }}
                     className="ml-auto text-foreground/20 hover:text-destructive transition-colors"
                     aria-label="Remove idea"

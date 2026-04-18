@@ -27,6 +27,9 @@ const TAB_META: Record<TabId, { title: string; subtitle: string }> = {
   },
 };
 
+const DEFAULT_AVATAR =
+  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=250&q=80";
+
 interface HeaderProps {
   activeTab: TabId;
   profile: UserProfile;
@@ -45,15 +48,15 @@ export function Header({ activeTab, profile }: HeaderProps) {
       <div className="flex items-center gap-4 glass px-4 py-2 rounded-2xl">
         <div className="text-right">
           <p className="text-sm font-bold text-foreground leading-tight">
-            {profile.name}
+            {profile.displayName || "Innovator"}
           </p>
           <p className="text-xs text-primary/80 font-semibold">
             Project Architect
           </p>
         </div>
         <img
-          src={profile.photo}
-          alt={profile.name}
+          src={profile.profilePhotoUrl || DEFAULT_AVATAR}
+          alt={profile.displayName || "Innovator"}
           className="w-10 h-10 rounded-xl object-cover"
           style={{ border: "1px solid rgba(255,255,255,0.1)" }}
         />

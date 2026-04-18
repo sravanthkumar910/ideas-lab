@@ -109,6 +109,41 @@ export const UserProfile = IDL.Record({
   'email' : IDL.Text,
   'profilePhotoUrl' : IDL.Opt(IDL.Text),
 });
+export const UpdateDeploymentParams = IDL.Record({
+  'name' : IDL.Text,
+  'architecture' : IDL.Text,
+  'githubUrl' : IDL.Text,
+  'deployedUrl' : IDL.Text,
+  'engineType' : IDL.Text,
+});
+export const UpdateIdeaParams = IDL.Record({
+  'status' : IDL.Text,
+  'ideaType' : IDL.Text,
+  'name' : IDL.Text,
+  'googleUrl' : IDL.Text,
+  'instaUrl' : IDL.Text,
+  'description' : IDL.Text,
+  'photoUrl' : IDL.Opt(IDL.Text),
+  'deadline' : IDL.Text,
+  'place' : IDL.Text,
+  'youtubeUrl' : IDL.Text,
+  'problem' : IDL.Text,
+});
+export const UpdateIncubatorParams = IDL.Record({
+  'name' : IDL.Text,
+  'pptFileName' : IDL.Opt(IDL.Text),
+  'srcFileName' : IDL.Opt(IDL.Text),
+  'googleUrl' : IDL.Text,
+  'instaUrl' : IDL.Text,
+  'imageUrl' : IDL.Opt(IDL.Text),
+  'docFileName' : IDL.Opt(IDL.Text),
+  'youtubeUrl' : IDL.Text,
+});
+export const UpdateTaskParams = IDL.Record({
+  'description' : IDL.Text,
+  'taskDate' : IDL.Text,
+  'taskTime' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   'addWebLink' : IDL.Func([IDL.Text, IDL.Text], [WebLink], []),
@@ -135,6 +170,26 @@ export const idlService = IDL.Service({
   'saveUserProfile' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
       [UserProfile],
+      [],
+    ),
+  'updateDeployment' : IDL.Func(
+      [IDL.Nat, UpdateDeploymentParams],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateIdea' : IDL.Func(
+      [IDL.Nat, UpdateIdeaParams],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateIncubatorProject' : IDL.Func(
+      [IDL.Nat, UpdateIncubatorParams],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateTask' : IDL.Func(
+      [IDL.Nat, UpdateTaskParams],
+      [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
       [],
     ),
 });
@@ -243,6 +298,41 @@ export const idlFactory = ({ IDL }) => {
     'email' : IDL.Text,
     'profilePhotoUrl' : IDL.Opt(IDL.Text),
   });
+  const UpdateDeploymentParams = IDL.Record({
+    'name' : IDL.Text,
+    'architecture' : IDL.Text,
+    'githubUrl' : IDL.Text,
+    'deployedUrl' : IDL.Text,
+    'engineType' : IDL.Text,
+  });
+  const UpdateIdeaParams = IDL.Record({
+    'status' : IDL.Text,
+    'ideaType' : IDL.Text,
+    'name' : IDL.Text,
+    'googleUrl' : IDL.Text,
+    'instaUrl' : IDL.Text,
+    'description' : IDL.Text,
+    'photoUrl' : IDL.Opt(IDL.Text),
+    'deadline' : IDL.Text,
+    'place' : IDL.Text,
+    'youtubeUrl' : IDL.Text,
+    'problem' : IDL.Text,
+  });
+  const UpdateIncubatorParams = IDL.Record({
+    'name' : IDL.Text,
+    'pptFileName' : IDL.Opt(IDL.Text),
+    'srcFileName' : IDL.Opt(IDL.Text),
+    'googleUrl' : IDL.Text,
+    'instaUrl' : IDL.Text,
+    'imageUrl' : IDL.Opt(IDL.Text),
+    'docFileName' : IDL.Opt(IDL.Text),
+    'youtubeUrl' : IDL.Text,
+  });
+  const UpdateTaskParams = IDL.Record({
+    'description' : IDL.Text,
+    'taskDate' : IDL.Text,
+    'taskTime' : IDL.Text,
+  });
   
   return IDL.Service({
     'addWebLink' : IDL.Func([IDL.Text, IDL.Text], [WebLink], []),
@@ -273,6 +363,26 @@ export const idlFactory = ({ IDL }) => {
     'saveUserProfile' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
         [UserProfile],
+        [],
+      ),
+    'updateDeployment' : IDL.Func(
+        [IDL.Nat, UpdateDeploymentParams],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateIdea' : IDL.Func(
+        [IDL.Nat, UpdateIdeaParams],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateIncubatorProject' : IDL.Func(
+        [IDL.Nat, UpdateIncubatorParams],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateTask' : IDL.Func(
+        [IDL.Nat, UpdateTaskParams],
+        [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
         [],
       ),
   });

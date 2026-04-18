@@ -13,6 +13,45 @@ type UserProfile =
    profilePhotoUrl: opt text;
  };
 type UserId = principal;
+type UpdateTaskParams = 
+ record {
+   description: text;
+   taskDate: text;
+   taskTime: text;
+ };
+type UpdateIncubatorParams = 
+ record {
+   docFileName: opt text;
+   googleUrl: text;
+   imageUrl: opt text;
+   instaUrl: text;
+   name: text;
+   pptFileName: opt text;
+   srcFileName: opt text;
+   youtubeUrl: text;
+ };
+type UpdateIdeaParams = 
+ record {
+   deadline: text;
+   description: text;
+   googleUrl: text;
+   ideaType: text;
+   instaUrl: text;
+   name: text;
+   photoUrl: opt text;
+   place: text;
+   problem: text;
+   status: text;
+   youtubeUrl: text;
+ };
+type UpdateDeploymentParams = 
+ record {
+   architecture: text;
+   deployedUrl: text;
+   engineType: text;
+   githubUrl: text;
+   name: text;
+ };
 type Timestamp = int;
 type Task = 
  record {
@@ -131,4 +170,24 @@ service : {
   getWebLinks: () -> (vec WebLink) query;
   saveUserProfile: (displayName: text, email: text, profilePhotoUrl:
    opt text) -> (UserProfile);
+  updateDeployment: (id: nat, params: UpdateDeploymentParams) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updateIdea: (id: nat, params: UpdateIdeaParams) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updateIncubatorProject: (id: nat, params: UpdateIncubatorParams) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updateTask: (id: nat, params: UpdateTaskParams) ->
+   (variant {
+      err: text;
+      ok;
+    });
 }

@@ -42,4 +42,28 @@ module {
     deployments.append(filtered);
     deployments.size() < sizeBefore;
   };
+
+  public func update(
+    deployments : List.List<Types.Deployment>,
+    _caller : Common.UserId,
+    id : Nat,
+    params : Types.UpdateDeploymentParams,
+  ) : { #ok; #err : Text } {
+    var found = false;
+    deployments.mapInPlace(
+      func(deployment) {
+        if (deployment.id == id) {
+          found := true;
+          { deployment with
+            name = params.name;
+            deployedUrl = params.deployedUrl;
+            githubUrl = params.githubUrl;
+            engineType = params.engineType;
+            architecture = params.architecture;
+          };
+        } else { deployment };
+      }
+    );
+    if (found) #ok else #err("Deployment not found");
+  };
 };

@@ -25,4 +25,9 @@ mixin (
     if (caller.isAnonymous()) Runtime.trap("Authentication required");
     IncubatorLib.delete(projects, caller, id);
   };
+
+  public shared ({ caller }) func updateIncubatorProject(id : Nat, params : IncubatorTypes.UpdateIncubatorParams) : async { #ok; #err : Text } {
+    if (caller.isAnonymous()) Runtime.trap("Authentication required");
+    IncubatorLib.update(projects, caller, id, params);
+  };
 };

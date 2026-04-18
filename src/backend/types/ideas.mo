@@ -31,4 +31,18 @@ module {
     instaUrl : Text;
     googleUrl : Text;
   };
+
+  public type UpdateIdeaParams = {
+    name : Text;
+    deadline : Text;
+    photoUrl : ?Text;
+    place : Text;
+    problem : Text;
+    description : Text;
+    ideaType : Text;
+    status : Text;
+    youtubeUrl : Text;
+    instaUrl : Text;
+    googleUrl : Text;
+  };
 };
